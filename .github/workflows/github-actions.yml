@@ -1,5 +1,5 @@
 name: github-actions
-run-name: ${{ github.actor }} is learning GitHub Actions
+run-name: ${{ github.actor }} is deploying new version of lookatme
 on:
   pull_request:
     types: [closed]
@@ -52,7 +52,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{github.actor}}
-          password: ${{secrets.GITHUB_TOKEN}}
+          password: ${{secrets.LOOKATME_TOKEN}}
 
       - name: build and push image
         id: docker_build
