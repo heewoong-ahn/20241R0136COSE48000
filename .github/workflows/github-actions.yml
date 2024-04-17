@@ -1,0 +1,80 @@
+name: github-actions
+run-name: ${{ github.actor }} is learning GitHub Actions
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+env:
+  DOCKER_IMAGE: ghcr.io/heewoong-ahn/lookatme
+  DOCKER_CONTAINER: lookatme
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code from branch main
+        uses: actions/checkout@v4
+
+      - name: setup node 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: npm
+      - name: setup .env
+        run: |
+          echo "DB_HOST = ${{secrets.DB_HOST}}" >> .env
+          echo "DB_PORT = ${{secrets.DB_PORT}}" >> .env
+          echo "DB_USERNAME = ${{secrets.DB_USERNAME}}" >> .env
+          echo "DB_PASSWORD = ${{secrets.DB_PASSWORD}}" >> .env
+          echo "DB_DATABASE = ${{secrets.DB_DATABASE}}" >> .env
+          cat .env
+
+      - name: install dependencies
+        run: npm install
+      - name: run test
+        run: npm run test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout source code from branch main
+        uses: actions/checkout@v4
+
+      - name: Setup Docker
+        id: buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+
+      - name: build and push image
+        id: docker_build
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: ${{env.DOCKER_IMAGE}}:latest
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: setup .env
+        run: |
+          echo "DB_HOST = ${{secrets.DB_HOST}}" >> .env
+          echo "DB_PORT = ${{secrets.DB_PORT}}" >> .env
+          echo "DB_USERNAME = ${{secrets.DB_USERNAME}}" >> .env
+          echo "DB_PASSWORD = ${{secrets.DB_PASSWORD}}" >> .env
+          echo "DB_DATABASE = ${{secrets.DB_DATABASE}}" >> .env
+          cat .env
+
+      - name: run docker
+        run: |
+          docker stop ${{env.DOCKER_CONTAINER}} && docker rm ${{env.DOCKER_CONTAINER}} && docker rmi ${{env.DOCKER_IMAGE}}:latest
+          docker run --env-file ./.env  -d -p 3000:3000 --name ${{env.DOCKER_CONTAINER}} --network host --restart always ${{env.DOCKER_IMAGE}}:latest
