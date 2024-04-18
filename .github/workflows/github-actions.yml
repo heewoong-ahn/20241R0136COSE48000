@@ -9,7 +9,6 @@ on:
 env:
   DOCKER_IMAGE: ghcr.io/heewoong-ahn/lookatme
   DOCKER_CONTAINER: lookatme
-  DB_HOST: ${{secrets.DB_HOST}}
 
 jobs:
   test:
@@ -68,12 +67,13 @@ jobs:
     steps:
       - name: setup .env
         run: |
-          echo "DB_HOST=${{env.DB_HOST}}" >> .env
-          echo "DB_PORT=${{secrets.DB_PORT}}" >> .env
-          echo "DB_USERNAME=${{secrets.DB_USERNAME}}" >> .env
-          echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> .env
-          echo "DB_DATABASE=${{secrets.DB_DATABASE}}" >> .env
-          cat .env
+          echo -n "DB_HOST=${{secrets.DB_HOST}}" >> .env
+          echo -n "DB_PORT=${{secrets.DB_PORT}}" >> .env
+          echo -n "DB_USERNAME=${{secrets.DB_USERNAME}}" >> .env
+          echo -n "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> .env
+          echo -n "DB_DATABASE=${{secrets.DB_DATABASE}}" >> .env
+          sed -i 's/^[ \t]*//' .env  # 공백 제거
+          cat ./.env
 
       - name: run docker
         run: |
