@@ -9,6 +9,7 @@ on:
 env:
   DOCKER_IMAGE: ghcr.io/heewoong-ahn/lookatme
   DOCKER_CONTAINER: lookatme
+  DB_HOST: ${{secrets.DB_HOST}}
 
 jobs:
   test:
@@ -67,7 +68,7 @@ jobs:
     steps:
       - name: setup .env
         run: |
-          echo "DB_HOST=${{secrets.DB_HOST}}" >> .env
+          echo "DB_HOST=${{env.DB_HOST}}" >> .env
           echo "DB_PORT=${{secrets.DB_PORT}}" >> .env
           echo "DB_USERNAME=${{secrets.DB_USERNAME}}" >> .env
           echo "DB_PASSWORD=${{secrets.DB_PASSWORD}}" >> .env
