@@ -8,6 +8,7 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
       secretOrKey: process.env.SECRET_KEY_REFRESH,
     });
   }
+
   validate(payload) {
     console.log(payload);
     return {
