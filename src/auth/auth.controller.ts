@@ -8,6 +8,7 @@ import {
   Req,
   Delete,
   Put,
+  Headers,
 } from '@nestjs/common';
 import {
   ApiConsumes,
@@ -53,7 +54,7 @@ export class AuthController {
   @ApiResponse({ status: 201, description: '회원가입 성공' })
   @ApiOperation({
     summary: '로그인',
-    description: 'AccessToken && RefreshToken반환\n각 유효기간 2h, 2w',
+    description: 'AccessToken && RefreshToken반환\n각 유효기간 1h, 2w',
   })
   async login(@Body() body: LoginDto) {
     return await this.authService.login(body);
@@ -68,7 +69,7 @@ export class AuthController {
     summary: '회원탈퇴',
   })
   async deleteUser(@Req() req) {
-    return await this.authService.deleteUser(req.id);
+    return await this.authService.deleteUser(req.user.id);
   }
 
   @UseGuards(AuthGuard('refresh'))
@@ -78,7 +79,13 @@ export class AuthController {
   @ApiOperation({
     summary: 'Access Token 재발급',
   })
+  //header 값 가져오는 데코레이터
+  //header에 authorization 필드가 인증 정보를 가지고 있음.
   restoreAccessToken(@Req() req) {
-    return this.authService.newAccessToken(req.id);
+    return this.authService.newAccessToken(
+      //passport 인증은 jwt에서 추출한 정보를 user 속성에 담는다!!!
+      req.user.id,
+      req.headers.authorization.substring(7),
+    );
   }
 }

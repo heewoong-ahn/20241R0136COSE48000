@@ -3,6 +3,7 @@ import {
   ConflictException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from 'src/repositories/user.repository';
 import { v4 as uuidv4 } from 'uuid';
@@ -98,13 +99,32 @@ export class AuthService {
       RefreshToken: jwtRefresh,
     };
   }
-  async newAccessToken(id: number) {
+
+  // RefreshToken이 DB에 저장되어 있는 것과 일치하는지 확인.
+  async compareRefreshToken(
+    refreshToken: string,
+    hashedRefreshToken: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(refreshToken, hashedRefreshToken);
+  }
+
+  //AccessToken 재발급
+  async newAccessToken(id: number, refreshToken: string) {
     const user = await this.userRepository.findUserById(id);
+    const isRefreshTokenMatch = await this.compareRefreshToken(
+      refreshToken,
+      user.jwtRefresh,
+    );
+
+    if (!isRefreshTokenMatch) {
+      throw new UnauthorizedException('Refresh Token이 일치하지 않습니다.');
+    }
     const newJwtAccess = this.getAccessToken(user);
 
     return {
       message: 'Access Token 재발급 성공',
       AccessToken: newJwtAccess,
+      a: refreshToken,
     };
   }
 
@@ -114,7 +134,7 @@ export class AuthService {
       {
         id: user.id,
       },
-      { secret: process.env.SECRET_KEY_ACCESS, expiresIn: '1m' },
+      { secret: process.env.SECRET_KEY_ACCESS, expiresIn: '1h' },
     );
   }
 

@@ -11,6 +11,7 @@ export class UserRepository extends Repository<User> {
   }
 
   async findUserById(id: number): Promise<User> {
+    //id가 null인 경우도 쿼리가 실행됨.!!
     const user = await this.findOne({ where: { id: id } });
     return user;
   }
@@ -22,6 +23,7 @@ export class UserRepository extends Repository<User> {
 
   async saveJwtRefresh(loginDto: LoginDto, jwtRefresh: string) {
     const user = await this.findUserByLoginId(loginDto.loginId);
+    console.log(user);
     user.jwtRefresh = jwtRefresh;
     await this.save(user);
   }
