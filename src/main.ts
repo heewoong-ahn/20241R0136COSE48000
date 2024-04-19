@@ -20,6 +20,26 @@ async function bootstrap() {
     .setTitle('LookAtME API')
     .setDescription('LookAtME API Docs')
     .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        name: 'Access Token',
+        description: 'Enter JWT Access Token',
+        in: 'header',
+      },
+      'Access Token',
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        name: 'Refresh Token',
+        description: 'Enter JWT Refresh Token',
+        in: 'header',
+      },
+      'Refresh Token',
+    )
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
