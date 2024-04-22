@@ -21,6 +21,11 @@ export class UserRepository extends Repository<User> {
     return user;
   }
 
+  async findUserByPhoneNumber(phoneNumber: string): Promise<User> {
+    const user = await this.findOne({ where: { phoneNumber: phoneNumber } });
+    return user;
+  }
+
   async saveJwtRefresh(loginDto: LoginDto, jwtRefresh: string) {
     const user = await this.findUserByLoginId(loginDto.loginId);
     console.log(user);

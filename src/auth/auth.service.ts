@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { User } from 'src/entities/user.entity';
 import { LoginDto } from './dtos/login-dto';
 import { JwtService } from '@nestjs/jwt';
+import { checkDuplicateLoginId } from './dtos/check-duplicate-loginId-dto';
 
 @Injectable()
 export class AuthService {
@@ -44,14 +45,36 @@ export class AuthService {
   //     return code;
   //   }
 
-  //회원가입
-  async createUser(createUserDto: CreateUserDto) {
+  //loginId 중복 체크
+  async checkDuplicateLoginId(checkDuplicateLoginId: checkDuplicateLoginId) {
     const user = await this.userRepository.findUserByLoginId(
-      createUserDto.loginId,
+      checkDuplicateLoginId.loginId,
     );
     if (user) {
       throw new ConflictException('해당 아이디는 이미 존재합니다.');
     }
+
+    return { message: `${checkDuplicateLoginId.loginId}로 로그인 가능합니다.` };
+  }
+
+  //회원가입
+  async createUser(createUserDto: CreateUserDto) {
+    const userById = await this.userRepository.findUserByLoginId(
+      createUserDto.loginId,
+    );
+    if (userById) {
+      throw new ConflictException('해당 아이디는 이미 존재합니다.');
+    }
+
+    const userByPhoneNumber = await this.userRepository.findUserByPhoneNumber(
+      createUserDto.phoneNumber,
+    );
+    if (userByPhoneNumber) {
+      throw new ConflictException(
+        '해당 전화번호로 만들어진 아이디가 이미 존재합니다.',
+      );
+    }
+
     //비밀번호 암호화
     const salt = await bcrypt.genSalt(10); //복잡도 10의 salt를 생성
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);

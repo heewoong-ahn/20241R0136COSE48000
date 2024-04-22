@@ -9,6 +9,7 @@ import {
   Delete,
   Put,
   Headers,
+  Param,
 } from '@nestjs/common';
 import {
   ApiConsumes,
@@ -25,6 +26,7 @@ import { SendEmailDto } from './dtos/send-email-dto';
 import { CreateUserDto } from './dtos/create-user-dto';
 import { LoginDto } from './dtos/login-dto';
 import { AuthGuard } from '@nestjs/passport';
+import { checkDuplicateLoginId } from './dtos/check-duplicate-loginId-dto';
 
 @Controller('auth')
 @ApiTags('유저 회원가입 및 인증 API')
@@ -48,6 +50,16 @@ export class AuthController {
   })
   async createUser(@Body() body: CreateUserDto) {
     return await this.authService.createUser(body);
+  }
+
+  //body를 통한 get요청은 불가함.
+  @Get('/:loginId')
+  @ApiResponse({ status: 201, description: '중복되는 아이디 존재하지 않음.' })
+  @ApiOperation({
+    summary: 'loginId 중복 체크',
+  })
+  async checkDuplicateLoginId(@Param() loginId: checkDuplicateLoginId) {
+    return await this.authService.checkDuplicateLoginId(loginId);
   }
 
   @Post('/login')
