@@ -133,6 +133,7 @@ export class AuthService {
 
   //AccessToken 재발급
   async newAccessToken(id: number, refreshToken: string) {
+    //refreshToken이 해당 유저의 refreshtoken이 맞는지 체크
     const user = await this.userRepository.findUserById(id);
     const isRefreshTokenMatch = await this.compareRefreshToken(
       refreshToken,

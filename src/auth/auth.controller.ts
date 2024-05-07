@@ -53,7 +53,8 @@ export class AuthController {
   }
 
   //body를 통한 get요청은 불가함.
-  @Get('/:loginId')
+  //그냥 '/:loginId'로 하게 되면 /~~인 모든 route를 가로채게 됨.
+  @Get('/duplicate/:loginId')
   @ApiResponse({ status: 201, description: '중복되는 아이디 존재하지 않음.' })
   @ApiOperation({
     summary: 'loginId 중복 체크',
