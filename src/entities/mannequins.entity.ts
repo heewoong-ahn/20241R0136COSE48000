@@ -9,9 +9,11 @@ import {
   OneToOne,
 } from 'typeorm';
 import { User } from './users.entity';
+import { Exclude } from 'class-transformer';
 
 @Entity()
 export class Mannequin extends BaseEntity {
+  @Exclude()
   @PrimaryColumn()
   user_id: number;
 
@@ -21,7 +23,7 @@ export class Mannequin extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column('char', { default: 'm' })
+  @Column('char', { length: 1, default: 'm' })
   sex: string;
 
   @Column('int', { default: 1 })
@@ -30,7 +32,7 @@ export class Mannequin extends BaseEntity {
   @Column('int', { default: 1 })
   skinColor: number;
 
-  @Column('numeric', { default: 175.0, scale: 1 })
+  @Column('decimal', { default: 175.0, scale: 1 })
   height: number;
 
   @Column('numeric', { default: 65.0, scale: 1 })
