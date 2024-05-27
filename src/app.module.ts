@@ -18,8 +18,8 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
       database: process.env.DB_DATABASE,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       logging: true,
-      autoLoadEntities: true,
-      synchronize: true, // 이 dir 을 root로 서버 DB를 수정해버려서 주의 필요!
+      autoLoadEntities: true, //entity loading
+      synchronize: true, // 이 dir 을 root로 서버 DB를 수정해버려서 주의 필요!: schema 일치화
       namingStrategy: new SnakeNamingStrategy(),
     }),
     AuthModule,
