@@ -10,10 +10,11 @@ import { v4 as uuidv4 } from 'uuid';
 // import { MailerService } from '@nestjs-modules/mailer';
 import { CreateUserDto } from './dtos/create-user-dto';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities/users.entity';
 import { LoginDto } from './dtos/login-dto';
 import { JwtService } from '@nestjs/jwt';
 import { checkDuplicateLoginId } from './dtos/check-duplicate-loginId-dto';
+import { Mannequin } from 'src/entities/mannequins.entity';
 
 @Injectable()
 export class AuthService {
@@ -82,6 +83,10 @@ export class AuthService {
 
     const newUser = await this.userRepository.createUser(createUserDto);
 
+    const newMannequin = new Mannequin();
+    newMannequin.user = newUser;
+    await newMannequin.save();
+
     return { message: `${newUser.loginId} 유저가 생성되었습니다.` };
   }
 
@@ -133,6 +138,7 @@ export class AuthService {
 
   //AccessToken 재발급
   async newAccessToken(id: number, refreshToken: string) {
+    //refreshToken이 해당 유저의 refreshtoken이 맞는지 체크
     const user = await this.userRepository.findUserById(id);
     const isRefreshTokenMatch = await this.compareRefreshToken(
       refreshToken,
