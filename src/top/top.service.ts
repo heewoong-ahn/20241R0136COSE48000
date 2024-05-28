@@ -7,6 +7,9 @@ import { TopRepository } from 'src/repositories/tops.repository';
 import { S3Service } from 'src/s3/s3.service';
 import { UploadTopDto } from './dtos/upload-top.dto';
 import { ClothCategory } from 'src/commons/enums/cloth-category.enum';
+import { map } from 'rxjs';
+import { Top } from 'src/entities/clothes/tops.entity';
+import { ResponseTopDto } from './dtos/response-top.dto';
 
 @Injectable()
 export class TopService {
@@ -35,5 +38,24 @@ export class TopService {
       throw new UnauthorizedException('해당 상의를 삭제할 권한이 없습니다.');
     }
     await this.topRepository.deleteTop(top);
+  }
+
+  async getTopCollection(id: number): Promise<Partial<Top>[]> {
+    const topCollection = await this.topRepository.getTopCollecion(id);
+    const urlTopCollection = topCollection.map((top) => ({
+      id: top.id,
+      url: top.url,
+    }));
+    return urlTopCollection;
+  }
+
+  async getTopDetail(id: number): Promise<ResponseTopDto> {
+    const top = await this.topRepository.findTopById(id);
+
+    if (!top) {
+      throw new NotFoundException('해당 상의가 존재하지 않습니다.');
+    }
+
+    return new ResponseTopDto(top);
   }
 }

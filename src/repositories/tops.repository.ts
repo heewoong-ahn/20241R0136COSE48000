@@ -18,7 +18,11 @@ export class TopRepository extends Repository<Top> {
     return top;
   }
 
-  async uploadTop(s3Url: string, userId: number, uploadTopDto: UploadTopDto) {
+  async uploadTop(
+    s3Url: string,
+    userId: number,
+    uploadTopDto: UploadTopDto,
+  ): Promise<ResponseTopDto> {
     const user = new User();
     user.id = userId;
     const top = this.create({
@@ -32,5 +36,11 @@ export class TopRepository extends Repository<Top> {
 
   async deleteTop(top: Top) {
     await this.softRemove(top);
+  }
+
+  async getTopCollecion(id: number): Promise<Top[]> {
+    console.log(id);
+    const topCollection = this.find({ where: { user: { id: id } } });
+    return topCollection;
   }
 }

@@ -8,6 +8,7 @@ import {
   Delete,
   Param,
   HttpCode,
+  Get,
 } from '@nestjs/common';
 import { TopService } from './top.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -33,10 +34,26 @@ export class TopController {
     return await this.topService.uploadTop(file, uploadTopDto, req.user.id);
   }
 
+  @CustomAuthDecorator(200, '상의 불러오기 성공', '사용자 모든 상의 불러오기')
+  @Get()
+  async getTopCollection(@Req() req) {
+    return await this.topService.getTopCollection(req.user.id);
+  }
+
   @CustomAuthDecorator(204, '파일 삭제 성공', '상의 사진 파일 삭제 작업')
   @HttpCode(204)
   @Delete('/:id')
   async deleteTop(@Param('id') id: number, @Req() req) {
     await this.topService.deleteTop(id, req.user.id);
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '해당 상의 상세정보 불러오기 성공',
+    '선택된 상의의 상세 정보 불러오기',
+  )
+  @Get('/:id')
+  async getTopDetail(@Param('id') id: number) {
+    return await this.topService.getTopDetail(id);
   }
 }
