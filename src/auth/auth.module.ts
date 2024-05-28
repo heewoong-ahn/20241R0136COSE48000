@@ -48,7 +48,6 @@ import { ChatRoom } from 'src/entities/chatrooms.entity';
     // }),
     TypeOrmModule.forFeature([
       User,
-      Mannequin,
       Top,
       Shoe,
       Accessory,
@@ -77,5 +76,6 @@ import { ChatRoom } from 'src/entities/chatrooms.entity';
     JwtAccessStrategy,
     JwtRefreshStrategy,
   ],
+  exports: [JwtAccessStrategy],
 })
 export class AuthModule {}
