@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { MannequinModule } from './mannequin/mannequin.module';
+import { TopModule } from './top/top.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { MannequinModule } from './mannequin/mannequin.module';
     }),
     AuthModule,
     MannequinModule,
+    TopModule,
   ],
   controllers: [AppController],
   providers: [AppService],
