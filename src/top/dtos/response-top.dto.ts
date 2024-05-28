@@ -5,6 +5,10 @@ import { Top } from 'src/entities/clothes/tops.entity';
 export class ResponseTopDto {
   @ApiProperty()
   @IsNotEmpty()
+  id: number;
+
+  @ApiProperty()
+  @IsNotEmpty()
   URL: string;
 
   @ApiProperty()
@@ -16,6 +20,7 @@ export class ResponseTopDto {
   memo?: string;
 
   constructor(top: Top) {
+    this.id = top.id;
     this.URL = top.url;
     this.type = top.type;
     this.memo = top.memo;

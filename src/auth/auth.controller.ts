@@ -65,11 +65,12 @@ export class AuthController {
     return await this.authService.login(body);
   }
 
+  //일단 회원도 soft delete
   @UseGuards(AuthGuard('access'))
   @Delete('/delete-user')
   //스웨거에서 header에 Access Token 담아서 보낸 것을 받기 위함.
   @ApiBearerAuth('Access Token')
-  @ApiResponse({ status: 201, description: '회원 탈퇴 성공' })
+  @ApiResponse({ status: 200, description: '회원 탈퇴 성공' })
   @ApiOperation({
     summary: '회원탈퇴',
   })

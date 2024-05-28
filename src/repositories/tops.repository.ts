@@ -10,6 +10,13 @@ export class TopRepository extends Repository<Top> {
   constructor(dataSource: DataSource) {
     super(Top, dataSource.createEntityManager());
   }
+  async findTopById(id: number) {
+    const top = this.findOne({ where: { id: id } });
+    if (!top) {
+      throw new NotFoundException('해당 상의가 존재하지 않습니다.');
+    }
+    return top;
+  }
 
   async uploadTop(s3Url: string, userId: number, uploadTopDto: UploadTopDto) {
     const user = new User();
@@ -21,5 +28,9 @@ export class TopRepository extends Repository<Top> {
       user: user,
     });
     return new ResponseTopDto(await this.save(top));
+  }
+
+  async deleteTop(top: Top) {
+    await this.softRemove(top);
   }
 }

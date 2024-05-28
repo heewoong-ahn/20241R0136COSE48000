@@ -37,4 +37,9 @@ export class S3Service {
 
     return `${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${folder}/${filename}`;
   }
+
+  //   aysnc deleteFile(){
+  // 해당 기능은 업로드된 옷을 hard delete할 때 구현.
+  // 현재는 지워진 옷이 룩북, 찜 등에 연관관계가 있는 것을 고려해 일단 soft delete
+  // }
 }

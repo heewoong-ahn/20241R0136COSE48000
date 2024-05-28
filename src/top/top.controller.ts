@@ -3,9 +3,11 @@ import {
   UploadedFile,
   UseInterceptors,
   Post,
-  UseGuards,
   Req,
   Body,
+  Delete,
+  Param,
+  HttpCode,
 } from '@nestjs/common';
 import { TopService } from './top.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -19,7 +21,7 @@ export class TopController {
   constructor(private readonly topService: TopService) {}
 
   @CustomAuthDecorator(200, '파일 업로드 성공', '상의 사진 파일 업로드 작업')
-  @Post('/upload')
+  @Post()
   @ApiConsumes('multipart/form-data')
   //file은 UploadedFile()로 받아야지만 값이 제대로 담긴다.
   @UseInterceptors(FileInterceptor('file'))
@@ -28,6 +30,13 @@ export class TopController {
     @Body() uploadTopDto: UploadTopDto,
     @Req() req,
   ) {
-    return this.topService.uploadTop(file, uploadTopDto, req.user.id);
+    return await this.topService.uploadTop(file, uploadTopDto, req.user.id);
+  }
+
+  @CustomAuthDecorator(204, '파일 삭제 성공', '상의 사진 파일 삭제 작업')
+  @HttpCode(204)
+  @Delete('/:id')
+  async deleteTop(@Param('id') id: number, @Req() req) {
+    await this.topService.deleteTop(id, req.user.id);
   }
 }
