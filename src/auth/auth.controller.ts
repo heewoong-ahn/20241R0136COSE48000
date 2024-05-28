@@ -3,26 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Res,
   UseGuards,
   Req,
   Delete,
-  Put,
-  Headers,
   Param,
 } from '@nestjs/common';
 import {
-  ApiConsumes,
-  ApiBody,
   ApiTags,
   ApiOperation,
-  ApiCreatedResponse,
-  ApiProperty,
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { SendEmailDto } from './dtos/send-email-dto';
 import { CreateUserDto } from './dtos/create-user-dto';
 import { LoginDto } from './dtos/login-dto';
 import { AuthGuard } from '@nestjs/passport';

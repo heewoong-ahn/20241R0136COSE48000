@@ -9,29 +9,17 @@ import {
 } from '@nestjs/common';
 import { TopService } from './top.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { UploadTopDto } from './dtos/upload-top.dto';
+import { CustomAuthDecorator } from 'src/commons/decorators/auth-swagger.decorator';
 
 @Controller('tops')
 @ApiTags('상의 사진 관련 api')
 export class TopController {
   constructor(private readonly topService: TopService) {}
 
-  @UseGuards(AuthGuard('access'))
+  @CustomAuthDecorator(200, '파일 업로드 성공', '상의 사진 파일 업로드 작업')
   @Post('/upload')
-  @ApiBearerAuth('Access Token')
-  @ApiResponse({ status: 200, description: '파일 업로드 성공' })
-  @ApiOperation({
-    summary: '상의 사진 파일 업로드 작업',
-  })
   @ApiConsumes('multipart/form-data')
   //file은 UploadedFile()로 받아야지만 값이 제대로 담긴다.
   @UseInterceptors(FileInterceptor('file'))
