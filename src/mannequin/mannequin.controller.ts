@@ -1,4 +1,4 @@
-import { Controller, Put, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Put, Body, UseGuards, Req, Get } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
@@ -29,5 +29,16 @@ export class MannequinController {
       adjustMannequinDto,
       req.user.id,
     );
+  }
+
+  @UseGuards(AuthGuard('access'))
+  @Get('/me')
+  @ApiBearerAuth('Access Token')
+  @ApiResponse({ status: 200, description: '마네킹 정보 반환 성공' })
+  @ApiOperation({
+    summary: '마네킹 정보 반환',
+  })
+  async getMannequin(@Req() req) {
+    return this.mannequinService.getMannequin(req.user.id);
   }
 }

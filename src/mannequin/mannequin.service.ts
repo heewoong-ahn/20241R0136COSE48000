@@ -15,4 +15,8 @@ export class MannequinService {
       userId,
     );
   }
+
+  async getMannequin(userId: number) {
+    return await this.mannequinRepository.getMannequin(userId);
+  }
 }

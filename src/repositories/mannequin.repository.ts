@@ -25,4 +25,14 @@ export class MannequinRepository extends Repository<Mannequin> {
 
     return await this.save(mannequin);
   }
+
+  async getMannequin(userId: number) {
+    const mannequin = await this.findOne({ where: { user_id: userId } });
+
+    if (!mannequin) {
+      throw new NotFoundException('해당 마네킹이 존재하지 않습니다.');
+    }
+
+    return mannequin;
+  }
 }
