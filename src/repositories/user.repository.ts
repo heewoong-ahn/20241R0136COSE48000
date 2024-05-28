@@ -41,6 +41,7 @@ export class UserRepository extends Repository<User> {
 
   async deleteUser(id: number) {
     const user = await this.findUserById(id);
-    await this.remove(user);
+    // await this.remove(user);
+    await this.softRemove(user);
   }
 }

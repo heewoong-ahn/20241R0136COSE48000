@@ -3,26 +3,18 @@ import {
   Get,
   Post,
   Body,
-  Res,
   UseGuards,
   Req,
   Delete,
-  Put,
-  Headers,
   Param,
 } from '@nestjs/common';
 import {
-  ApiConsumes,
-  ApiBody,
   ApiTags,
   ApiOperation,
-  ApiCreatedResponse,
-  ApiProperty,
   ApiResponse,
   ApiBearerAuth,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { SendEmailDto } from './dtos/send-email-dto';
 import { CreateUserDto } from './dtos/create-user-dto';
 import { LoginDto } from './dtos/login-dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -73,11 +65,12 @@ export class AuthController {
     return await this.authService.login(body);
   }
 
+  //일단 회원도 soft delete
   @UseGuards(AuthGuard('access'))
   @Delete('/delete-user')
   //스웨거에서 header에 Access Token 담아서 보낸 것을 받기 위함.
   @ApiBearerAuth('Access Token')
-  @ApiResponse({ status: 201, description: '회원 탈퇴 성공' })
+  @ApiResponse({ status: 200, description: '회원 탈퇴 성공' })
   @ApiOperation({
     summary: '회원탈퇴',
   })
