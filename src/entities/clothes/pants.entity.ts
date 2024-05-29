@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  RelationId,
 } from 'typeorm';
 import { At } from '../at.entity';
 import { User } from '../users.entity';
@@ -26,6 +27,8 @@ export class Pant extends At {
 
   @ManyToOne(() => User, (user) => user.pants)
   user: User;
+  @RelationId((pant: Pant) => pant.user)
+  userId: number;
 
   @OneToMany(() => UserPantSave, (userPantSave) => userPantSave.pant)
   userPantSaves: UserPantSave[];
