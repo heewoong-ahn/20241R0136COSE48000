@@ -1,47 +1,47 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Top } from 'src/entities/clothes/tops.entity';
 import { User } from 'src/entities/users.entity';
 import { DataSource, Repository } from 'typeorm';
 import { ResponseClothDto } from 'src/clothes/dtos/response-cloth.dto';
 import { ClothCategory } from 'src/commons/enums/cloth-category.enum';
 import { UploadClothDto } from 'src/clothes/dtos/upload-cloth.dto';
+import { Pant } from 'src/entities/clothes/pants.entity';
 
 @Injectable()
-export class TopRepository extends Repository<Top> {
+export class PantRepository extends Repository<Pant> {
   constructor(dataSource: DataSource) {
-    super(Top, dataSource.createEntityManager());
+    super(Pant, dataSource.createEntityManager());
   }
-  async findTopById(id: number) {
-    const top = this.findOne({ where: { id: id } });
-    if (!top) {
-      throw new NotFoundException('해당 상의가 존재하지 않습니다.');
+  async findPantById(id: number) {
+    const pant = this.findOne({ where: { id: id } });
+    if (!pant) {
+      throw new NotFoundException('해당 바지가 존재하지 않습니다.');
     }
-    return top;
+    return pant;
   }
 
-  async uploadTop(
+  async uploadPant(
     s3Url: string,
     userId: number,
     uploadClothDto: UploadClothDto,
   ): Promise<ResponseClothDto> {
     const user = new User();
     user.id = userId;
-    const top = this.create({
+    const pant = this.create({
       url: s3Url,
       type: uploadClothDto.type,
       memo: uploadClothDto.memo,
       user: user,
     });
-    return new ResponseClothDto(await this.save(top), ClothCategory.tops);
+    return new ResponseClothDto(await this.save(pant), ClothCategory.pants);
   }
 
-  async deleteTop(top: Top) {
-    await this.softRemove(top);
+  async deletePant(pant: Pant) {
+    await this.softRemove(pant);
   }
 
-  async getTopCollection(id: number): Promise<Top[]> {
+  async getPantCollection(id: number): Promise<Pant[]> {
     console.log(id);
-    const topCollection = this.find({ where: { user: { id: id } } });
-    return topCollection;
+    const pantCollection = this.find({ where: { user: { id: id } } });
+    return pantCollection;
   }
 }

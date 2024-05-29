@@ -6,7 +6,6 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { UserRepository } from 'src/repositories/user.repository';
-import { v4 as uuidv4 } from 'uuid';
 // import { MailerService } from '@nestjs-modules/mailer';
 import { CreateUserDto } from './dtos/create-user-dto';
 import * as bcrypt from 'bcrypt';
