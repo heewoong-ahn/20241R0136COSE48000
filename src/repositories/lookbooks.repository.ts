@@ -60,4 +60,8 @@ export class LookBookRepository extends Repository<LookBook> {
 
     return await this.save(lookbook);
   }
+
+  async deleteLookBook(lookbook: LookBook) {
+    this.softRemove(lookbook);
+  }
 }

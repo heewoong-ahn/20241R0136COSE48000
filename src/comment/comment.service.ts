@@ -1,9 +1,11 @@
 import {
   ForbiddenException,
+  Inject,
   Injectable,
   NotAcceptableException,
   NotFoundException,
   UnauthorizedException,
+  forwardRef,
 } from '@nestjs/common';
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { CommentRepository } from 'src/repositories/comment.repository';
@@ -52,5 +54,18 @@ export class CommentService {
       throw new ForbiddenException('해당 댓글을 삭제할 권한이 없습니다.');
     }
     return this.commentRepository.deleteComment(commentId);
+  }
+
+  async hardDeleteAllLookBookRelatedComment(lookbookId: number) {
+    const commentCollection =
+      await this.commentRepository.findCommentCollectionByLookBookId(
+        lookbookId,
+      );
+
+    commentCollection.map((comment) =>
+      this.commentRepository.hardDeleteComment(comment),
+    );
+
+    return;
   }
 }

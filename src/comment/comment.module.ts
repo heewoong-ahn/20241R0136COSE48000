@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentController } from './comment.controller';
 import { CommentService } from './comment.service';
@@ -12,5 +12,6 @@ import { LookBookRepository } from 'src/repositories/lookbooks.repository';
   imports: [TypeOrmModule.forFeature([Comment, User, LookBook])],
   controllers: [CommentController],
   providers: [CommentService, CommentRepository, LookBookRepository],
+  exports: [CommentService],
 })
 export class CommentModule {}

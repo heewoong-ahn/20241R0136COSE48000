@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccessoryLookBook } from 'src/entities/accessory-lookbook.entity';
 import { LookBook } from 'src/entities/lookbooks.entity';
@@ -17,6 +17,9 @@ import { TopLookBookRepository } from 'src/repositories/top-lookbooks.repository
 import { AccessoryLookBookRepository } from 'src/repositories/accessory-lookbooks.repository';
 import { UserLookBookSaveRepository } from 'src/repositories/user-lookbook-save.repository';
 import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.repository';
+import { CommentService } from 'src/comment/comment.service';
+import { CommentModule } from 'src/comment/comment.module';
+import { CommentRepository } from 'src/repositories/comment.repository';
 
 @Module({
   imports: [
@@ -32,6 +35,7 @@ import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.
       Pant,
       Shoe,
     ]),
+    CommentModule,
   ],
   controllers: [LookbookController],
   providers: [
@@ -41,6 +45,10 @@ import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.
     AccessoryLookBookRepository,
     UserLookBookSaveRepository,
     UserLookBookLikeRepository,
+    CommentService,
+    //CommentService만을 주입받아 쓰지만, CommentService안에서 CommentRepository를 주입받아 쓰므로
+    //CommentRepository도 적어줘야 함.
+    CommentRepository,
   ],
 })
 export class LookbookModule {}

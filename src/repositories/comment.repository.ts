@@ -16,6 +16,18 @@ export class CommentRepository extends Repository<Comment> {
     return comment;
   }
 
+  async findCommentCollectionByLookBookId(
+    lookbookId: number,
+  ): Promise<Comment[]> {
+    console.log('AAA' + lookbookId);
+    const commentCollection = await this.find({
+      where: { lookbook: { id: lookbookId } },
+      withDeleted: true,
+    });
+    console.log('AA' + commentCollection);
+    return commentCollection;
+  }
+
   async createComment(createCommentDto: CreateCommentDto, userId: number) {
     const { lookbookId, content, parentCommentId } = createCommentDto;
     const user = new User();
@@ -50,11 +62,15 @@ export class CommentRepository extends Repository<Comment> {
 
     return;
   }
+
+  async hardDeleteComment(comment: Comment) {
+    await this.remove(comment);
+    return;
+  }
+
   async getCommentCollection(lookbookId: number): Promise<Comment[]> {
-    const commentCollection = await this.find({
-      where: { lookbook: { id: lookbookId } },
-      withDeleted: true,
-    });
+    const commentCollection =
+      await this.findCommentCollectionByLookBookId(lookbookId);
 
     const filterDeletedCommentCollection = commentCollection.map((comment) => {
       //삭제된 댓글이면

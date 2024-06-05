@@ -1,4 +1,14 @@
-import { Controller, Post, Body, Req, Param, Put, Get } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Param,
+  Put,
+  Get,
+  HttpCode,
+  Delete,
+} from '@nestjs/common';
 import { SaveLookBookDto } from './dtos/save-lookbook.dto';
 import { LookbookService } from './lookbook.service';
 import { ApiTags } from '@nestjs/swagger';
@@ -16,6 +26,13 @@ export class LookbookController {
       saveLookBookDto,
       req.user.id,
     );
+  }
+
+  @CustomAuthDecorator(201, '룩북 삭제 성공', '룩북 삭제 작업')
+  @HttpCode(204)
+  @Delete('/:lookbookId')
+  async deleteLookBook(@Param('lookbookId') lookbookId: number, @Req() req) {
+    return await this.lookbookService.deleteLookBook(lookbookId, req.user.id);
   }
 
   @CustomAuthDecorator(200, '룩북 공개/비공개 성공', '룩북 공개/비공개 작업')

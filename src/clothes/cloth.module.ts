@@ -57,7 +57,6 @@ import { UserAccessorySave } from 'src/entities/save-clothes/user-accessory-save
     UserPantSaveRepository,
     UserAccessorySaveRepository,
     S3Service,
-    JwtAccessStrategy,
   ],
 })
 export class ClothModule {}
