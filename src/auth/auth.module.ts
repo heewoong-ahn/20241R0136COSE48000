@@ -48,11 +48,6 @@ import { ChatRoom } from 'src/entities/chatrooms.entity';
     // }),
     TypeOrmModule.forFeature([
       User,
-      LookBook,
-      AccessoryLookBook,
-      TopLookBook,
-      UserLookBookSave,
-      UserLookBookLike,
       Comment,
       Follow,
       UserChatRoom,

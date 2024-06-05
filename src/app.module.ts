@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { MannequinModule } from './mannequin/mannequin.module';
 import { ClothModule } from './clothes/cloth.module';
+import { LookbookModule } from './lookbook/lookbook.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ClothModule } from './clothes/cloth.module';
     AuthModule,
     MannequinModule,
     ClothModule,
+    LookbookModule,
   ],
   controllers: [AppController],
   providers: [AppService],

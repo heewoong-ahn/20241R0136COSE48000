@@ -23,7 +23,7 @@ export class UserTopSaveRepository extends Repository<UserTopSave> {
   async clippedOrNot(clothId: number, userId: number): Promise<UserTopSave> {
     const userTopSave = await this.findOne({
       where: { top: { id: clothId }, user: { id: userId } },
-      //이미 삭제된 게시글의 옷에 대한 찜을 취소하고 싶을 때를 위해서.
+      //이미 삭제된 게시글의 옷에 대한 찜을 취소하고 싶을 때를 위해 softremove된것도 포함해서 탐색.
       withDeleted: true,
     });
     return userTopSave;
