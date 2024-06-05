@@ -23,6 +23,20 @@ export class LookBookRepository extends Repository<LookBook> {
     return;
   }
 
+  async notLikeLookBook(lookBookdId: number) {
+    const lookbook = await this.findLookBookById(lookBookdId);
+    lookbook.likeCnt -= 1;
+    await this.save(lookbook);
+    return;
+  }
+
+  async likeLookBook(lookBookdId: number) {
+    const lookbook = await this.findLookBookById(lookBookdId);
+    lookbook.likeCnt += 1;
+    await this.save(lookbook);
+    return;
+  }
+
   async saveLookBook(
     saveLookBookWithoutClothIdDto: SaveLookBookWithoutClothIdDto,
     userId: number,

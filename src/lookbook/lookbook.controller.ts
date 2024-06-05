@@ -19,8 +19,24 @@ export class LookbookController {
   }
 
   @CustomAuthDecorator(200, '룩북 공개/비공개 성공', '룩북 공개/비공개 작업')
-  @Put('/:lookbookId')
+  @Put('/show/:lookbookId')
   async showNotShow(@Req() req, @Param('lookbookId') lookbookId: number) {
     return await this.lookbookService.showNotShow(lookbookId, req.user.id);
+  }
+
+  @CustomAuthDecorator(200, '룩북 찜/찜해제 성공', '룩북 찜/찜해제 작업')
+  @Put('/clip/:lookbookId')
+  async clipNotClip(@Req() req, @Param('lookbookId') lookbookId: number) {
+    return await this.lookbookService.clipNotClip(lookbookId, req.user.id);
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '룩북 좋아요/좋아요해제 성공',
+    '룩북 좋아요/좋아요해제 작업',
+  )
+  @Put('/like/:lookbookId')
+  async likeNotLike(@Req() req, @Param('lookbookId') lookbookId: number) {
+    return await this.lookbookService.likeNotLike(lookbookId, req.user.id);
   }
 }

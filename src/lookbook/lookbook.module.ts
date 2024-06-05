@@ -15,6 +15,8 @@ import { Shoe } from 'src/entities/clothes/shoes.entity';
 import { LookBookRepository } from 'src/repositories/lookbooks.repository';
 import { TopLookBookRepository } from 'src/repositories/top-lookbooks.repository';
 import { AccessoryLookBookRepository } from 'src/repositories/accessory-lookbooks.repository';
+import { UserLookBookSaveRepository } from 'src/repositories/user-lookbook-save.repository';
+import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.repository';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { AccessoryLookBookRepository } from 'src/repositories/accessory-lookbook
     LookBookRepository,
     TopLookBookRepository,
     AccessoryLookBookRepository,
+    UserLookBookSaveRepository,
+    UserLookBookLikeRepository,
   ],
 })
 export class LookbookModule {}
