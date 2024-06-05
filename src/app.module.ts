@@ -8,6 +8,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { MannequinModule } from './mannequin/mannequin.module';
 import { ClothModule } from './clothes/cloth.module';
 import { LookbookModule } from './lookbook/lookbook.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { LookbookModule } from './lookbook/lookbook.module';
     MannequinModule,
     ClothModule,
     LookbookModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

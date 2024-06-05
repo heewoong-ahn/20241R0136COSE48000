@@ -18,8 +18,11 @@ export class Comment extends At {
   @Column('text')
   content: string;
 
-  @ManyToOne(() => User, (user) => user.comments)
+  @ManyToOne(() => User, (user) => user.comments, { nullable: true })
   user: User;
+  @RelationId((comment: Comment) => comment.user)
+  @Column({ nullable: true })
+  userId: number;
 
   @ManyToOne(() => LookBook, (lookbook) => lookbook.comments)
   lookbook: LookBook;
@@ -29,6 +32,6 @@ export class Comment extends At {
   parentComment: Comment;
   //참고관계에 parentComment_Id라는 column을 만들어 부여해 join없이 부모 댓글 id 불러올 수 있음.
   @RelationId((comment: Comment) => comment.parentComment)
-  @Column()
-  parentComment_Id: number;
+  @Column({ nullable: true })
+  parentCommentId: number;
 }

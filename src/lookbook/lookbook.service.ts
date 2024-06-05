@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -59,7 +60,7 @@ export class LookbookService {
       throw new NotFoundException('해당 룩북이 존재하지 않습니다.');
     }
     if (!(lookBook.userId == userId)) {
-      throw new UnauthorizedException(
+      throw new ForbiddenException(
         '다른 계정의 룩북에 대한 접근으로 권한이 없습니다.',
       );
     }
