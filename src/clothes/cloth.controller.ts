@@ -13,10 +13,14 @@ import {
 } from '@nestjs/common';
 import { ClothService } from './cloth.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UploadClothDto } from './dtos/upload-cloth.dto';
 import { CustomAuthDecorator } from 'src/commons/decorators/auth-swagger.decorator';
 import { ClothCategory } from 'src/commons/enums/cloth-category.enum';
+import {
+  ResponseClothCollectionDto,
+  ResponseClothDto,
+} from './dtos/response-cloth.dto';
 
 @Controller('clothes')
 @ApiTags('옷 작업 api')
@@ -55,6 +59,7 @@ export class ClothController {
     '해당 카테고리 옷 전체 불러오기 성공',
     '해당 카테고리의 사용자 모든 옷 불러오기',
   )
+  @ApiResponse({ type: ResponseClothCollectionDto, isArray: true })
   @ApiParam({
     name: 'category',
     enum: ClothCategory,
@@ -96,6 +101,7 @@ export class ClothController {
     enum: ClothCategory,
     description: '해당 의류 카테고리 명시',
   })
+  @ApiResponse({ type: ResponseClothDto })
   @Get('/:category/:id')
   async getClothDetail(
     @Param('category', new ParseEnumPipe(ClothCategory))

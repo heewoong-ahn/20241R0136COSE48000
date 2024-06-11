@@ -1,8 +1,9 @@
 import { Controller, Put, Body, Req, Get } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MannequinService } from './mannequin.service';
 import { AdjustMannequinDto } from './dtos/adjust-mannequin.dto';
 import { CustomAuthDecorator } from 'src/commons/decorators/auth-swagger.decorator';
+import { Mannequin } from 'src/entities/mannequins.entity';
 
 @Controller('mannequin')
 @ApiTags('마네킹 수정 API')
@@ -22,6 +23,9 @@ export class MannequinController {
   }
 
   @CustomAuthDecorator(200, '마네킹 정보 반환 성공', '마네킹 정보 반환')
+  @ApiResponse({
+    type: Mannequin,
+  })
   @Get('/me')
   async getMannequin(@Req() req) {
     return this.mannequinService.getMannequin(req.user.id);
