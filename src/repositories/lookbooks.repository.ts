@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Like, Repository } from 'typeorm';
 import { LookBook } from 'src/entities/lookbooks.entity';
-import { SaveLookBookWithoutClothIdDto } from 'src/lookbook/dtos/save-lookbook.dto';
+import {
+  SaveLookBookDto,
+  SaveLookBookWithoutClothIdDto,
+} from 'src/lookbook/dtos/save-lookbook.dto';
 import { User } from 'src/entities/users.entity';
 import { Pant } from 'src/entities/clothes/pants.entity';
 import { Shoe } from 'src/entities/clothes/shoes.entity';
@@ -63,5 +66,43 @@ export class LookBookRepository extends Repository<LookBook> {
 
   async deleteLookBook(lookbook: LookBook) {
     this.softRemove(lookbook);
+  }
+
+  async getLookBookCollection(keyword: string): Promise<LookBook[]> {
+    const lookbookCollection = this.createQueryBuilder('lookbook')
+      .leftJoinAndSelect('lookbook.topLookBooks', 'topLookBook')
+      .leftJoinAndSelect('topLookBook.top', 'top')
+      .leftJoinAndSelect('lookbook.accessoryLookBooks', 'accessoryLookBook')
+      .leftJoinAndSelect('accessoryLookBook.accessory', 'accessory')
+      .leftJoinAndSelect('lookbook.pant', 'pant')
+      .leftJoinAndSelect('lookbook.shoe', 'shoe')
+      .select([
+        'lookbook.id',
+        'topLookBook',
+        'top.url',
+        'accessoryLookBook',
+        'accessory.url',
+        'pant.url',
+        'shoe.url',
+        'lookbook.type',
+      ]);
+
+    //keyword값이 존재할때만 filter를 해서 불필요한 비용 절감.
+    if (keyword) {
+      const filteredLookBookCollection = lookbookCollection
+        .where(
+          "array_to_string(lookbook.type, ',') ILIKE :keyword OR lookbook.title ILIKE :keyword OR lookbook.memo ILIKE :keyword OR top.type ILIKE :keyword OR pant.type ILIKE :keyword OR shoe.type ILIKE :keyword OR accessory.type ILIKE :keyword",
+          { keyword: `%${keyword}%` },
+        )
+        .orderBy('lookbook.createdAt', 'DESC')
+        .getMany();
+      return filteredLookBookCollection;
+    }
+
+    const defaultLookbookCollection = await lookbookCollection
+      .orderBy('lookbook.createdAt', 'DESC')
+      .getMany();
+
+    return defaultLookbookCollection;
   }
 }

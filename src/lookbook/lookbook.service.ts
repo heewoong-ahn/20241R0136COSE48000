@@ -17,6 +17,7 @@ import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.
 import { CommentService } from 'src/comment/comment.service';
 import { S3Service } from 'src/s3/s3.service';
 import { MannequinLookBookRepository } from 'src/repositories/mannequin-lookbooks.repository';
+import { LookBook } from 'src/entities/lookbooks.entity';
 
 @Injectable()
 export class LookbookService {
@@ -184,5 +185,9 @@ export class LookbookService {
     await this.commentService.hardDeleteAllLookBookRelatedComment(lookbookId);
 
     return;
+  }
+
+  async getLookBookCollection(keyword: string): Promise<LookBook[]> {
+    return await this.lookBookRepository.getLookBookCollection(keyword);
   }
 }

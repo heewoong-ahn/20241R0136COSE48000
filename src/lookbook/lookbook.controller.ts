@@ -12,10 +12,11 @@ import {
   UploadedFile,
   UsePipes,
   ParseArrayPipe,
+  Query,
 } from '@nestjs/common';
 import { SaveLookBookDto } from './dtos/save-lookbook.dto';
 import { LookbookService } from './lookbook.service';
-import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CustomAuthDecorator } from 'src/commons/decorators/auth-swagger.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -33,6 +34,7 @@ export class LookbookController {
     @Body() saveLookBookDto: SaveLookBookDto,
     @Req() req,
   ) {
+    console.log(saveLookBookDto.type);
     return await this.lookbookService.saveLookBook(
       file,
       saveLookBookDto,
@@ -80,5 +82,17 @@ export class LookbookController {
   @Put('/like/:lookbookId')
   async likeNotLike(@Req() req, @Param('lookbookId') lookbookId: number) {
     return await this.lookbookService.likeNotLike(lookbookId, req.user.id);
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '룩북 표지들 불러오기 성공',
+    '검색창에 뜨는 룩북 표지들 불러오는 작업',
+  )
+  @Get()
+  @ApiQuery({ name: 'keyword', required: false, type: String })
+  //Query param은 값을 주지 않으면 undefined가 됨.
+  async getLookBookCollection(@Query('keyword') keyword?: string | undefined) {
+    return await this.lookbookService.getLookBookCollection(keyword);
   }
 }
