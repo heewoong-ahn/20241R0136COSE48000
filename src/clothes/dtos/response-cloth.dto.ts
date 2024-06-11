@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PickType } from '@nestjs/swagger';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ClothCategory } from 'src/commons/enums/cloth-category.enum';
 import { Accessory } from 'src/entities/clothes/accessories.entity';
@@ -11,7 +11,7 @@ export class ResponseClothDto {
   @IsNotEmpty()
   id: number;
 
-  @ApiProperty()
+  @ApiProperty({ example: ClothCategory.tops })
   @IsNotEmpty()
   category: ClothCategory;
 
@@ -19,7 +19,7 @@ export class ResponseClothDto {
   @IsNotEmpty()
   URL: string;
 
-  @ApiProperty()
+  @ApiProperty({ example: '반팔' })
   @IsNotEmpty()
   type: string;
 
@@ -35,3 +35,8 @@ export class ResponseClothDto {
     this.category = category;
   }
 }
+
+export class ResponseClothCollectionDto extends PickType(ResponseClothDto, [
+  'id',
+  'URL',
+] as const) {}
