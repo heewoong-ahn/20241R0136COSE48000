@@ -20,6 +20,9 @@ import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.
 import { CommentService } from 'src/comment/comment.service';
 import { CommentModule } from 'src/comment/comment.module';
 import { CommentRepository } from 'src/repositories/comment.repository';
+import { S3Service } from 'src/s3/s3.service';
+import { MannequinLookBookRepository } from 'src/repositories/mannequin-lookbooks.repository';
+import { MannequinLookBook } from 'src/entities/mannequin-lookbook.entity';
 
 @Module({
   imports: [
@@ -34,6 +37,7 @@ import { CommentRepository } from 'src/repositories/comment.repository';
       Accessory,
       Pant,
       Shoe,
+      MannequinLookBook,
     ]),
     CommentModule,
   ],
@@ -49,6 +53,8 @@ import { CommentRepository } from 'src/repositories/comment.repository';
     //CommentService만을 주입받아 쓰지만, CommentService안에서 CommentRepository를 주입받아 쓰므로
     //CommentRepository도 적어줘야 함.
     CommentRepository,
+    S3Service,
+    MannequinLookBookRepository,
   ],
 })
 export class LookbookModule {}

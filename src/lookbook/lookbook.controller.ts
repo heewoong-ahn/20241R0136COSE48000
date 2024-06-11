@@ -8,11 +8,16 @@ import {
   Get,
   HttpCode,
   Delete,
+  UseInterceptors,
+  UploadedFile,
+  UsePipes,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { SaveLookBookDto } from './dtos/save-lookbook.dto';
 import { LookbookService } from './lookbook.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { CustomAuthDecorator } from 'src/commons/decorators/auth-swagger.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('lookbook')
 @ApiTags('룩북 작업 api')
@@ -21,8 +26,15 @@ export class LookbookController {
 
   @CustomAuthDecorator(201, '룩북 생성 성공', '룩북 저장 작업')
   @Post()
-  async saveLookBook(@Body() saveLookBookDto: SaveLookBookDto, @Req() req) {
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('file'))
+  async saveLookBook(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() saveLookBookDto: SaveLookBookDto,
+    @Req() req,
+  ) {
     return await this.lookbookService.saveLookBook(
+      file,
       saveLookBookDto,
       req.user.id,
     );

@@ -15,6 +15,8 @@ import { Accessory } from 'src/entities/clothes/accessories.entity';
 import { UserLookBookSaveRepository } from 'src/repositories/user-lookbook-save.repository';
 import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.repository';
 import { CommentService } from 'src/comment/comment.service';
+import { S3Service } from 'src/s3/s3.service';
+import { MannequinLookBookRepository } from 'src/repositories/mannequin-lookbooks.repository';
 
 @Injectable()
 export class LookbookService {
@@ -25,9 +27,16 @@ export class LookbookService {
     private readonly userLookBookSaveRepository: UserLookBookSaveRepository,
     private readonly userLookBookLikeRepository: UserLookBookLikeRepository,
     private readonly commentService: CommentService,
+    private readonly s3Service: S3Service,
+    private readonly mannequinLookBookRepository: MannequinLookBookRepository,
   ) {}
 
-  async saveLookBook(saveLookBookDto: SaveLookBookDto, userId: number) {
+  async saveLookBook(
+    mannequinLookBook: Express.Multer.File,
+    saveLookBookDto: SaveLookBookDto,
+    userId: number,
+  ) {
+    console.log(saveLookBookDto.type);
     const { topIds, accessoryIds, pantId, shoeId, ...saveLookbookData } =
       saveLookBookDto;
 
@@ -54,6 +63,21 @@ export class LookbookService {
         lookbook,
       );
     });
+
+    //마네킹-룩북 사진 저장.
+
+    const url = await this.s3Service.uploadFile(
+      mannequinLookBook,
+      'mannequin-lookbook',
+    );
+    await this.mannequinLookBookRepository.uploadMannequinLookBook(
+      url,
+      userId,
+      saveLookbookData.title,
+      saveLookbookData.type,
+      saveLookbookData.memo,
+    );
+
     return;
   }
 

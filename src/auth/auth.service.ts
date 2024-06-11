@@ -122,6 +122,7 @@ export class AuthService {
 
     return {
       message: '로그인 성공',
+      nickname: user.nickname,
       AccessToken: jwtAccess,
       RefreshToken: jwtRefresh,
     };
@@ -152,7 +153,6 @@ export class AuthService {
     return {
       message: 'Access Token 재발급 성공',
       AccessToken: newJwtAccess,
-      a: refreshToken,
     };
   }
 
