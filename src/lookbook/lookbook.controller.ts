@@ -40,7 +40,20 @@ export class LookbookController {
     );
   }
 
-  @CustomAuthDecorator(201, '룩북 삭제 성공', '룩북 삭제 작업')
+  @CustomAuthDecorator(204, '마네킹-룩북 삭제 성공', '마네킹-룩북 삭제 작업')
+  @HttpCode(204)
+  @Delete('/:mannequinLookBookId')
+  async deleteMannequinLookBook(
+    @Param('mannequinLookBookId') mannequinLookBookId: number,
+    @Req() req,
+  ) {
+    return await this.lookbookService.deleteMannequinLookBook(
+      mannequinLookBookId,
+      req.user.id,
+    );
+  }
+
+  @CustomAuthDecorator(204, '룩북 삭제 성공', '룩북 삭제 작업')
   @HttpCode(204)
   @Delete('/:lookbookId')
   async deleteLookBook(@Param('lookbookId') lookbookId: number, @Req() req) {

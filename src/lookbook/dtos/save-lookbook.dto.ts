@@ -66,9 +66,9 @@ export class SaveLookBookDto {
   @ApiProperty({ type: [String] })
   @Transform(({ value }) => {
     if (Array.isArray(value)) {
-      return value; // 이미 배열인 경우 각 요소를 숫자로 변환
+      return value; // 이미 배열인 경우 그대로 반환
     } else if (typeof value === 'string') {
-      return value.split(','); // 문자열인 경우 쉼표로 분리하여 배열로 변환
+      return value.split(','); // 문자열인 경우 쉼표로 분리하여 배열로 변환 후 반환
     }
     return [];
   })

@@ -137,6 +137,35 @@ export class LookbookService {
     );
   }
 
+  async deleteMannequinLookBook(mannequinLookBookId: number, userId: number) {
+    const mannequinLookBook =
+      await this.mannequinLookBookRepository.findMannequinLookBookById(
+        mannequinLookBookId,
+      );
+    if (!mannequinLookBook) {
+      throw new NotFoundException(
+        '삭제하려는 마네킹-룩북이 존재하지 않습니다.',
+      );
+    }
+    if (mannequinLookBook.userId != userId) {
+      throw new ForbiddenException(
+        '해당 마네킹-룩북에 대한 삭제 권한이 없습니다.',
+      );
+    }
+
+    //transaction으로 적용되어야 함.
+
+    await this.mannequinLookBookRepository.hardDeleteMannequinLookBook(
+      mannequinLookBook,
+    );
+
+    //s3에서 삭제.
+
+    await this.s3Service.deleteMannequinLookBook(mannequinLookBook.url);
+
+    return;
+  }
+
   async deleteLookBook(lookbookId: number, userId: number) {
     const lookbook = await this.lookBookRepository.findLookBookById(lookbookId);
     if (!lookbook) {

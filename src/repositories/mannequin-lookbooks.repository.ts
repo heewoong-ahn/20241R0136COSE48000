@@ -12,6 +12,13 @@ export class MannequinLookBookRepository extends Repository<MannequinLookBook> {
     super(MannequinLookBook, dataSource.createEntityManager());
   }
 
+  async findMannequinLookBookById(mannequinLookBookId: number) {
+    const mannequinLookBook = await this.findOne({
+      where: { id: mannequinLookBookId },
+    });
+    return mannequinLookBook;
+  }
+
   async uploadMannequinLookBook(
     s3Url: string,
     userId: number,
@@ -31,5 +38,9 @@ export class MannequinLookBookRepository extends Repository<MannequinLookBook> {
 
     await this.save(mannequinLookBook);
     return;
+  }
+
+  async hardDeleteMannequinLookBook(mannequinLookBook: MannequinLookBook) {
+    this.remove(mannequinLookBook);
   }
 }
