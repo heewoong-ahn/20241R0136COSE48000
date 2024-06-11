@@ -19,6 +19,8 @@ import { CreateUserDto } from './dtos/create-user-dto';
 import { LoginDto } from './dtos/login-dto';
 import { AuthGuard } from '@nestjs/passport';
 import { checkDuplicateLoginId } from './dtos/check-duplicate-loginId-dto';
+import { LoginResponseDto } from './dtos/login-response-dto';
+import { NewAccessResponseDto } from './dtos/new-access-response-dto';
 
 @Controller('auth')
 @ApiTags('유저 회원가입 및 인증 API')
@@ -56,7 +58,11 @@ export class AuthController {
   }
 
   @Post('/login')
-  @ApiResponse({ status: 201, description: '회원가입 성공' })
+  @ApiResponse({
+    status: 201,
+    description: '로그인 성공',
+    type: LoginResponseDto,
+  })
   @ApiOperation({
     summary: '로그인',
     description: 'AccessToken && RefreshToken반환\n각 유효기간 1h, 2w',
@@ -81,7 +87,11 @@ export class AuthController {
   @UseGuards(AuthGuard('refresh'))
   @Get('/new-access-token')
   @ApiBearerAuth('Refresh Token')
-  @ApiResponse({ status: 201, description: 'Access Token 재발급 성공' })
+  @ApiResponse({
+    status: 201,
+    description: 'Access Token 재발급 성공',
+    type: NewAccessResponseDto,
+  })
   @ApiOperation({
     summary: 'Access Token 재발급',
   })
