@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Like, Repository } from 'typeorm';
+import { Brackets, DataSource, Like, Repository } from 'typeorm';
 import { LookBook } from 'src/entities/lookbooks.entity';
 import {
   SaveLookBookDto,
@@ -8,6 +8,8 @@ import {
 import { User } from 'src/entities/users.entity';
 import { Pant } from 'src/entities/clothes/pants.entity';
 import { Shoe } from 'src/entities/clothes/shoes.entity';
+import { LookBookCollectionRequestDto } from 'src/lookbook/dtos/lookbook-collection-request.dto';
+import { LookBookCollectionResponseDataDto } from 'src/lookbook/dtos/lookbook-collection-response-data.dto';
 
 @Injectable()
 export class LookBookRepository extends Repository<LookBook> {
@@ -68,7 +70,9 @@ export class LookBookRepository extends Repository<LookBook> {
     this.softRemove(lookbook);
   }
 
-  async getLookBookCollection(keyword: string): Promise<LookBook[]> {
+  async getLookBookCollection(
+    lookBookCollectionRequestDto: LookBookCollectionRequestDto,
+  ): Promise<any> {
     const lookbookCollection = this.createQueryBuilder('lookbook')
       .leftJoinAndSelect('lookbook.topLookBooks', 'topLookBook')
       .leftJoinAndSelect('topLookBook.top', 'top')
@@ -84,25 +88,79 @@ export class LookBookRepository extends Repository<LookBook> {
         'accessory.url',
         'pant.url',
         'shoe.url',
-        'lookbook.type',
       ]);
 
-    //keyword값이 존재할때만 filter를 해서 불필요한 비용 절감.
-    if (keyword) {
-      const filteredLookBookCollection = lookbookCollection
-        .where(
-          "array_to_string(lookbook.type, ',') ILIKE :keyword OR lookbook.title ILIKE :keyword OR lookbook.memo ILIKE :keyword OR top.type ILIKE :keyword OR pant.type ILIKE :keyword OR shoe.type ILIKE :keyword OR accessory.type ILIKE :keyword",
-          { keyword: `%${keyword}%` },
-        )
-        .orderBy('lookbook.createdAt', 'DESC')
-        .getMany();
-      return filteredLookBookCollection;
+    let result: any[];
+
+    //첫 return은 매끄러운 화면 전환을 위해 take의 2배의 data를 반환. 이후 take만큼 만환.
+    if (!lookBookCollectionRequestDto.cursor) {
+      //검색 keyword가 없다면
+      if (!lookBookCollectionRequestDto.keyword) {
+        result = await lookbookCollection
+          .orderBy('lookbook.id', 'DESC')
+          .take(lookBookCollectionRequestDto.take * 2 + 1)
+          .getMany();
+      }
+      //keyword가 있다면
+      //keyword값이 존재할때만 filter를 해서 불필요한 비용 절감.
+      else {
+        result = await lookbookCollection
+          .where(
+            new Brackets((qb) => {
+              qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
+                .orWhere('lookbook.title ILIKE :keyword')
+                .orWhere('lookbook.memo ILIKE :keyword')
+                .orWhere('top.type ILIKE :keyword')
+                .orWhere('pant.type ILIKE :keyword')
+                .orWhere('shoe.type ILIKE :keyword')
+                .orWhere('accessory.type ILIKE :keyword');
+            }),
+          )
+          .setParameters({
+            keyword: `%${lookBookCollectionRequestDto.keyword}%`,
+          })
+          .orderBy('lookbook.id', 'DESC')
+          .take(lookBookCollectionRequestDto.take * 2 + 1)
+          .getMany();
+      }
+    }
+    //cursor값이 있다면 = 2번째 이상 로딩 요청
+    else {
+      //keyword가 없다면
+      if (!lookBookCollectionRequestDto.keyword) {
+        result = await lookbookCollection
+          .where('lookbook.id < :cursor', {
+            cursor: lookBookCollectionRequestDto.cursor,
+          })
+          .orderBy('lookbook.id', 'DESC')
+          .take(lookBookCollectionRequestDto.take + 1)
+          .getMany();
+      }
+      //keyword가 있다면
+      else {
+        result = await lookbookCollection
+          .where('lookbook.id < :cursor')
+          .andWhere(
+            new Brackets((qb) => {
+              qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
+                .orWhere('lookbook.title ILIKE :keyword')
+                .orWhere('lookbook.memo ILIKE :keyword')
+                .orWhere('top.type ILIKE :keyword')
+                .orWhere('pant.type ILIKE :keyword')
+                .orWhere('shoe.type ILIKE :keyword')
+                .orWhere('accessory.type ILIKE :keyword');
+            }),
+          )
+          .orderBy('lookbook.id', 'DESC')
+          .take(lookBookCollectionRequestDto.take + 1)
+          .setParameters({
+            cursor: lookBookCollectionRequestDto.cursor,
+            keyword: `%${lookBookCollectionRequestDto.keyword}%`,
+          })
+          .getMany();
+      }
     }
 
-    const defaultLookbookCollection = await lookbookCollection
-      .orderBy('lookbook.createdAt', 'DESC')
-      .getMany();
-
-    return defaultLookbookCollection;
+    return result;
   }
 }

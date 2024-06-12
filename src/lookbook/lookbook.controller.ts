@@ -16,9 +16,17 @@ import {
 } from '@nestjs/common';
 import { SaveLookBookDto } from './dtos/save-lookbook.dto';
 import { LookbookService } from './lookbook.service';
-import { ApiBody, ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiConsumes,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CustomAuthDecorator } from 'src/commons/decorators/auth-swagger.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { LookBookCollectionRequestDto } from './dtos/lookbook-collection-request.dto';
+import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
 
 @Controller('lookbook')
 @ApiTags('룩북 작업 api')
@@ -44,7 +52,7 @@ export class LookbookController {
 
   @CustomAuthDecorator(204, '마네킹-룩북 삭제 성공', '마네킹-룩북 삭제 작업')
   @HttpCode(204)
-  @Delete('/:mannequinLookBookId')
+  @Delete('/mannequinLookBook/:mannequinLookBookId')
   async deleteMannequinLookBook(
     @Param('mannequinLookBookId') mannequinLookBookId: number,
     @Req() req,
@@ -90,9 +98,17 @@ export class LookbookController {
     '검색창에 뜨는 룩북 표지들 불러오는 작업',
   )
   @Get()
+  @ApiResponse({
+    type: LookBookCollectionResponseDataDto,
+  })
   @ApiQuery({ name: 'keyword', required: false, type: String })
+  @ApiQuery({ name: 'cursor', required: false, type: Number })
   //Query param은 값을 주지 않으면 undefined가 됨.
-  async getLookBookCollection(@Query('keyword') keyword?: string | undefined) {
-    return await this.lookbookService.getLookBookCollection(keyword);
+  async getLookBookCollection(
+    @Query() lookbookCollectionRequestDto: LookBookCollectionRequestDto,
+  ): Promise<LookBookCollectionResponseDataDto> {
+    return await this.lookbookService.getLookBookCollection(
+      lookbookCollectionRequestDto,
+    );
   }
 }

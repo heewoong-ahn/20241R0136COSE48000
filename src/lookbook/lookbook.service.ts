@@ -17,7 +17,8 @@ import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.
 import { CommentService } from 'src/comment/comment.service';
 import { S3Service } from 'src/s3/s3.service';
 import { MannequinLookBookRepository } from 'src/repositories/mannequin-lookbooks.repository';
-import { LookBook } from 'src/entities/lookbooks.entity';
+import { LookBookCollectionRequestDto } from './dtos/lookbook-collection-request.dto';
+import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
 
 @Injectable()
 export class LookbookService {
@@ -187,7 +188,43 @@ export class LookbookService {
     return;
   }
 
-  async getLookBookCollection(keyword: string): Promise<LookBook[]> {
-    return await this.lookBookRepository.getLookBookCollection(keyword);
+  async getLookBookCollection(
+    lookBookCollectionRequestDto: LookBookCollectionRequestDto,
+  ): Promise<LookBookCollectionResponseDataDto> {
+    const result = await this.lookBookRepository.getLookBookCollection(
+      lookBookCollectionRequestDto,
+    );
+
+    let cursor: number = null;
+    let hasNext: boolean;
+    //metadata 설정
+    //take개수보다 작으면 false가 됨.
+    const take = lookBookCollectionRequestDto.take;
+    if (!lookBookCollectionRequestDto.cursor) {
+      hasNext = result.length > lookBookCollectionRequestDto.take * 2;
+    } else {
+      hasNext = result.length > lookBookCollectionRequestDto.take;
+    }
+
+    //다음으로 줄 값이 없다면
+    if (!hasNext) {
+      cursor = null;
+    }
+    //다음으로 줄 값이 있다면
+    else {
+      cursor = result[result.length - 2].id;
+    }
+
+    //클라이언트 반환은 hasNext위해 불렀던 추가 데이터 빼고 반환.
+    if (hasNext) {
+      result.pop();
+    }
+    const response = new LookBookCollectionResponseDataDto(result, {
+      take,
+      hasNext,
+      cursor,
+    });
+
+    return response;
   }
 }
