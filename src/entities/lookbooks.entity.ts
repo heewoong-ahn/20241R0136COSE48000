@@ -38,7 +38,7 @@ export class LookBook extends At {
   likeCnt: number;
 
   @Column('int', { default: 0 })
-  commnentCnt: number;
+  commentCnt: number;
 
   @ManyToOne(() => User, (user) => user.lookbooks)
   user: User;

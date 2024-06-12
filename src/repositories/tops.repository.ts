@@ -32,7 +32,11 @@ export class TopRepository extends Repository<Top> {
       memo: uploadClothDto.memo,
       user: user,
     });
-    return new ResponseClothDto(await this.save(top), ClothCategory.tops);
+    return new ResponseClothDto(
+      await this.save(top),
+      ClothCategory.tops,
+      false,
+    );
   }
 
   async deleteTop(top: Top) {

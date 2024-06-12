@@ -7,6 +7,7 @@ import { TopRepository } from 'src/repositories/tops.repository';
 import { UploadClothDto } from './dtos/upload-cloth.dto';
 import { Top } from 'src/entities/clothes/tops.entity';
 import { UserTopSaveRepository } from 'src/repositories/user-top-save.repository';
+import { UserTopSave } from 'src/entities/save-clothes/user-top-save.entity';
 
 @Injectable()
 export class TopService {
@@ -70,5 +71,13 @@ export class TopService {
       throw new NotFoundException('해당 상의가 존재하지 않습니다.');
     }
     return await this.userTopSaveRepository.clipTop(clothId, userId);
+  }
+
+  async clippedOrNot(clothId: number, userId: number): Promise<UserTopSave> {
+    const userTopSave = await this.userTopSaveRepository.clippedOrNot(
+      clothId,
+      userId,
+    );
+    return userTopSave;
   }
 }

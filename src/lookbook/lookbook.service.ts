@@ -17,7 +17,7 @@ import { UserLookBookLikeRepository } from 'src/repositories/user-lookbook-like.
 import { CommentService } from 'src/comment/comment.service';
 import { S3Service } from 'src/s3/s3.service';
 import { MannequinLookBookRepository } from 'src/repositories/mannequin-lookbooks.repository';
-import { LookBookCollectionRequestDto } from './dtos/lookbook-collection-request.dto';
+import { LookBookRequestCursorPaginationDto } from './dtos/lookbook-request-cursor-pagination.dto';
 import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
 
 @Injectable()
@@ -189,21 +189,21 @@ export class LookbookService {
   }
 
   async getLookBookCollection(
-    lookBookCollectionRequestDto: LookBookCollectionRequestDto,
+    lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
   ): Promise<LookBookCollectionResponseDataDto> {
     const result = await this.lookBookRepository.getLookBookCollection(
-      lookBookCollectionRequestDto,
+      lookBookRequestCursorPaginationDto,
     );
 
     let cursor: number = null;
     let hasNext: boolean;
     //metadata 설정
     //take개수보다 작으면 false가 됨.
-    const take = lookBookCollectionRequestDto.take;
-    if (!lookBookCollectionRequestDto.cursor) {
-      hasNext = result.length > lookBookCollectionRequestDto.take * 2;
+    const take = lookBookRequestCursorPaginationDto.take;
+    if (!lookBookRequestCursorPaginationDto.cursor) {
+      hasNext = result.length > lookBookRequestCursorPaginationDto.take * 2;
     } else {
-      hasNext = result.length > lookBookCollectionRequestDto.take;
+      hasNext = result.length > lookBookRequestCursorPaginationDto.take;
     }
 
     //다음으로 줄 값이 없다면
@@ -226,5 +226,64 @@ export class LookbookService {
     });
 
     return response;
+  }
+
+  async getLookBookDetail(
+    lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    userId: number,
+  ) {
+    const result = await this.lookBookRepository.getLookBookDetail(
+      lookBookRequestCursorPaginationDto,
+    );
+
+    const withLikeAndSaveAndComment = await Promise.all(
+      result.map(async (item) => {
+        let like: boolean = false;
+        let save: boolean = false;
+
+        const userLookBookLike =
+          await this.userLookBookLikeRepository.likedOrNot(item.id, userId);
+        if (userLookBookLike) {
+          like = true;
+        }
+
+        const userLookBookSave =
+          await this.userLookBookSaveRepository.clippedOrNot(item.id, userId);
+        if (userLookBookSave) {
+          save = true;
+        }
+
+        const commentCollection =
+          await this.commentService.getCommentCollection(item.id);
+
+        return { ...item, like: like, save: save, comment: commentCollection };
+      }),
+    );
+
+    //meta data 설정
+
+    let cursor: number = null;
+    let hasNext: boolean;
+    const take = lookBookRequestCursorPaginationDto.take;
+
+    //take개수보다 작으면 false가 됨.
+    hasNext = result.length > lookBookRequestCursorPaginationDto.take;
+
+    //다음으로 줄 값이 없다면
+    if (!hasNext) {
+      cursor = null;
+    }
+    //다음으로 줄 값이 있다면
+    else {
+      cursor = result[result.length - 1].id;
+    }
+
+    const withMeta = {
+      withLikeAndSaveAndComment,
+      cursor: cursor,
+      hasNext: hasNext,
+      take: take,
+    };
+    return withMeta;
   }
 }

@@ -11,13 +11,13 @@ import {
   IsString,
 } from 'class-validator';
 
-export class LookBookCollectionResponseMetaDto {
-  @ApiProperty({ example: 9 })
+export class LookBookResponseCursorPaginationMetaDto {
+  @ApiProperty({ example: 0 })
   @IsNotEmpty()
   @IsInt()
   take: number;
 
-  @ApiProperty({ example: 9 })
+  @ApiProperty({ example: 0 })
   //첫 요청은 커서 값이 없음.
   @IsInt()
   cursor: number;

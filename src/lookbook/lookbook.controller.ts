@@ -25,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { CustomAuthDecorator } from 'src/commons/decorators/auth-swagger.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { LookBookCollectionRequestDto } from './dtos/lookbook-collection-request.dto';
+import { LookBookRequestCursorPaginationDto } from './dtos/lookbook-request-cursor-pagination.dto';
 import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
 
 @Controller('lookbook')
@@ -105,10 +105,29 @@ export class LookbookController {
   @ApiQuery({ name: 'cursor', required: false, type: Number })
   //Query param은 값을 주지 않으면 undefined가 됨.
   async getLookBookCollection(
-    @Query() lookbookCollectionRequestDto: LookBookCollectionRequestDto,
+    @Query()
+    lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
   ): Promise<LookBookCollectionResponseDataDto> {
     return await this.lookbookService.getLookBookCollection(
-      lookbookCollectionRequestDto,
+      lookBookRequestCursorPaginationDto,
+    );
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '룩북 상세 정보 불러오기 성공',
+    '룩북 상세 정보 불러오는 작업',
+  )
+  @ApiQuery({ name: 'keyword', required: false, type: String })
+  @Get('/detail')
+  async getLookBookDetail(
+    @Query()
+    lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    @Req() req,
+  ) {
+    return await this.lookbookService.getLookBookDetail(
+      lookBookRequestCursorPaginationDto,
+      req.user.id,
     );
   }
 }

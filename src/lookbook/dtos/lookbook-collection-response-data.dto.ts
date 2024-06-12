@@ -2,7 +2,7 @@ import { ParseArrayPipe, UsePipes } from '@nestjs/common';
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsArray } from 'class-validator';
-import { LookBookCollectionResponseMetaDto } from './lookbook-collection-response-meta.dto';
+import { LookBookResponseCursorPaginationMetaDto } from './lookbook-response-curson-pagination-meta.dto';
 import { LookBookCollectionDataTransform } from 'src/commons/interfaces/lookbook-collection-data-response.interface';
 
 class UrlCollection {
@@ -57,13 +57,13 @@ export class LookBookCollectionResponseDataDto {
   readonly lookBookCollection: LookBookCollectionDataTransform[];
 
   @ApiProperty()
-  readonly cursorPaginationMetaData: LookBookCollectionResponseMetaDto;
+  readonly cursorPaginationMetaData: LookBookResponseCursorPaginationMetaDto;
 
-  constructor(data: any[], meta: LookBookCollectionResponseMetaDto) {
+  constructor(data: any[], meta: LookBookResponseCursorPaginationMetaDto) {
     // this.lookBookCollection = transformData(data);
 
     this.lookBookCollection = data.map(
-      (item) => new LookBookResponseTransfromDataClass(item),
+      (item) => new LookBookResponseDataTransformClass(item),
     );
     this.cursorPaginationMetaData = meta;
   }

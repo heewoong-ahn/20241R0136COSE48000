@@ -19,12 +19,23 @@ export class CommentRepository extends Repository<Comment> {
   async findCommentCollectionByLookBookId(
     lookbookId: number,
   ): Promise<Comment[]> {
-    console.log('AAA' + lookbookId);
-    const commentCollection = await this.find({
-      where: { lookbook: { id: lookbookId } },
-      withDeleted: true,
-    });
-    console.log('AA' + commentCollection);
+    // const commentCollection = await this.find({
+    //   where: { lookbook: { id: lookbookId } },
+    //   withDeleted: true,
+    // });
+    // return commentCollection;
+    const commentCollection = await this.createQueryBuilder('comment')
+      .leftJoinAndSelect('comment.user', 'user')
+      .select([
+        'user.nickname',
+        'comment.id',
+        'comment.content',
+        'comment.parentCommentId',
+      ])
+      .where('comment.lookbook.id = :lookbookId', { lookbookId })
+      .withDeleted()
+      .getMany();
+
     return commentCollection;
   }
 

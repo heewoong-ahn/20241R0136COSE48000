@@ -107,8 +107,9 @@ export class ClothController {
     @Param('category', new ParseEnumPipe(ClothCategory))
     category: ClothCategory,
     @Param('id') id: number,
+    @Req() req,
   ) {
-    return await this.clothService.getClothDetail(category, id);
+    return await this.clothService.getClothDetail(category, id, req.user.id);
   }
 
   //post기능과 delete을 한 곳에 둔게 restful하지 않음. front에서 찜 여부 체크해서 다른 endpoint호출하게 해야하나?

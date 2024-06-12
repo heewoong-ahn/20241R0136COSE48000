@@ -10,6 +10,7 @@ import {
 import { CreateCommentDto } from './dtos/create-comment.dto';
 import { CommentRepository } from 'src/repositories/comment.repository';
 import { LookBookRepository } from 'src/repositories/lookbooks.repository';
+import { Comment } from 'src/entities/comments.entity';
 
 @Injectable()
 export class CommentService {
@@ -67,5 +68,9 @@ export class CommentService {
     );
 
     return;
+  }
+
+  async getCommentCollection(lookbookId: number): Promise<Comment[]> {
+    return await this.commentRepository.getCommentCollection(lookbookId);
   }
 }

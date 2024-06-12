@@ -7,6 +7,7 @@ import { UploadClothDto } from './dtos/upload-cloth.dto';
 import { ShoeRepository } from 'src/repositories/shoes.repository';
 import { Shoe } from 'src/entities/clothes/shoes.entity';
 import { UserShoeSaveRepository } from 'src/repositories/user-shoe-save.repository';
+import { UserShoeSave } from 'src/entities/save-clothes/user-shoe-save.entity';
 
 @Injectable()
 export class ShoeService {
@@ -67,5 +68,13 @@ export class ShoeService {
       throw new NotFoundException('해당 신발이 존재하지 않습니다.');
     }
     return await this.userShoeSaveRepository.clipShoe(clothId, userId);
+  }
+
+  async clippedOrNot(clothId: number, userId: number): Promise<UserShoeSave> {
+    const userShoeSave = await this.userShoeSaveRepository.clippedOrNot(
+      clothId,
+      userId,
+    );
+    return userShoeSave;
   }
 }

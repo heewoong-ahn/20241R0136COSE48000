@@ -7,6 +7,7 @@ import { UploadClothDto } from './dtos/upload-cloth.dto';
 import { PantRepository } from 'src/repositories/pants.repository';
 import { Pant } from 'src/entities/clothes/pants.entity';
 import { UserPantSaveRepository } from 'src/repositories/user-pant-save.repository';
+import { UserPantSave } from 'src/entities/save-clothes/user-pant-save.entity';
 
 @Injectable()
 export class PantService {
@@ -70,5 +71,13 @@ export class PantService {
       throw new NotFoundException('해당 바지가 존재하지 않습니다.');
     }
     return await this.userPantSaveRepository.clipPant(clothId, userId);
+  }
+
+  async clippedOrNot(clothId: number, userId: number): Promise<UserPantSave> {
+    const userPantSave = await this.userPantSaveRepository.clippedOrNot(
+      clothId,
+      userId,
+    );
+    return userPantSave;
   }
 }
