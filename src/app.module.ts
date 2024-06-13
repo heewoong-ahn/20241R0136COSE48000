@@ -9,6 +9,7 @@ import { MannequinModule } from './mannequin/mannequin.module';
 import { ClothModule } from './clothes/cloth.module';
 import { LookbookModule } from './lookbook/lookbook.module';
 import { CommentModule } from './comment/comment.module';
+import { FollowModule } from './follow/follow.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CommentModule } from './comment/comment.module';
     ClothModule,
     LookbookModule,
     CommentModule,
+    FollowModule,
   ],
   controllers: [AppController],
   providers: [AppService],

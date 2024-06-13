@@ -51,6 +51,12 @@ export class User extends At {
   @Column('varchar', { nullable: true })
   jwtRefresh: string;
 
+  @Column('int', { default: 0 })
+  followerCnt: number;
+
+  @Column('int', { default: 0 })
+  followingCnt: number;
+
   @OneToMany(() => Top, (top) => top.user)
   tops: Top[];
 
@@ -97,10 +103,10 @@ export class User extends At {
   comments: Comment[];
 
   //팔로워들을 찾고 싶으면 follow 테이블에서 본인의 user_id가 followed_id여야 함.
-  @OneToMany(() => Follow, (follow) => follow.followed_id)
+  @OneToMany(() => Follow, (follow) => follow.followed)
   followers: Follow[];
 
-  @OneToMany(() => Follow, (follow) => follow.follower_id)
+  @OneToMany(() => Follow, (follow) => follow.follower)
   followings: Follow[];
 
   @OneToMany(() => UserChatRoom, (userChatRoom) => userChatRoom.user)
