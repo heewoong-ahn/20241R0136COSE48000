@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
   IsNumber,
-  IsString,
-  MaxLength,
-  MinLength,
 } from 'class-validator';
 
 export class AdjustMannequinDto {
