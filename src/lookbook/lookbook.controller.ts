@@ -28,6 +28,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { LookBookRequestCursorPaginationDto } from './dtos/lookbook-request-cursor-pagination.dto';
 import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
 import { LookBookDetailResponseDataDto } from './dtos/lookbook-detail-response-data.dto';
+import { MannequinLookBookRequestCursorPaginationDto } from './dtos/mannequin-lookbook-request-cursor-pagination.dto';
+import { MannequinLookBookCollectionResponseData } from './dtos/mannequin-lookbook-collection-response-data.dto';
+import { MannequinLookBookDetailResponseData } from './dtos/mannequin-lookbook-detail-response-data.dto';
 
 @Controller('lookbook')
 @ApiTags('룩북 작업 api')
@@ -178,6 +181,42 @@ export class LookbookController {
       lookBookRequestCursorPaginationDto,
       req.user.id,
       userUUID,
+    );
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '내 프로필 마네킹-룩북 표지 불러오기 성공.',
+    '내 프로필 마네킹-룩북 표지 불러오기 작업.',
+  )
+  @Get('/mannequin-lookbook')
+  @ApiQuery({ name: 'cursor', required: false, type: Number })
+  //Query param은 값을 주지 않으면 undefined가 됨.
+  async getMannequinLookBookCollection(
+    @Query()
+    mannequinLookBookRequestCursorPaginationDto: MannequinLookBookRequestCursorPaginationDto,
+    @Req() req,
+  ): Promise<MannequinLookBookCollectionResponseData> {
+    return await this.lookbookService.getMannequinLookBookCollection(
+      mannequinLookBookRequestCursorPaginationDto,
+      req.user.id,
+    );
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '내 프로필 마네킹-룩북 상세 불러오기 성공.',
+    '내 프로필 마네킹-룩북 상세 불러오기 작업.',
+  )
+  @Get('/mannequin-lookbook/detail')
+  async getMannequinLookBookDetail(
+    @Query()
+    mannequinLookBookRequestCursorPaginationDto: MannequinLookBookRequestCursorPaginationDto,
+    @Req() req,
+  ): Promise<MannequinLookBookDetailResponseData> {
+    return await this.lookbookService.getMannequinLookBookDetail(
+      mannequinLookBookRequestCursorPaginationDto,
+      req.user.id,
     );
   }
 }

@@ -21,6 +21,9 @@ import { LookBookRequestCursorPaginationDto } from './dtos/lookbook-request-curs
 import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
 import { LookBookDetailResponseDataDto } from './dtos/lookbook-detail-response-data.dto';
 import { UserRepository } from 'src/repositories/user.repository';
+import { MannequinLookBookRequestCursorPaginationDto } from './dtos/mannequin-lookbook-request-cursor-pagination.dto';
+import { MannequinLookBookCollectionResponseData } from './dtos/mannequin-lookbook-collection-response-data.dto';
+import { MannequinLookBookDetailResponseData } from './dtos/mannequin-lookbook-detail-response-data.dto';
 
 @Injectable()
 export class LookbookService {
@@ -313,6 +316,88 @@ export class LookbookService {
       withLikeAndSaveAndComment,
       { take, cursor, hasNext },
     );
+    return response;
+  }
+
+  async getMannequinLookBookCollection(
+    mannequinLookBookRequestCursorPaginationDto: MannequinLookBookRequestCursorPaginationDto,
+    userId: number,
+  ): Promise<MannequinLookBookCollectionResponseData> {
+    const result =
+      await this.mannequinLookBookRepository.getMannequinLookBookCollection(
+        mannequinLookBookRequestCursorPaginationDto,
+        userId,
+      );
+    let cursor: number = null;
+    let hasNext: boolean;
+    //metadata 설정
+    //take개수보다 작으면 false가 됨.
+    const take = mannequinLookBookRequestCursorPaginationDto.take;
+    if (!mannequinLookBookRequestCursorPaginationDto.cursor) {
+      hasNext =
+        result.length > mannequinLookBookRequestCursorPaginationDto.take * 2;
+    } else {
+      hasNext =
+        result.length > mannequinLookBookRequestCursorPaginationDto.take;
+    }
+
+    //다음으로 줄 값이 없다면
+    if (!hasNext) {
+      cursor = null;
+    }
+    //다음으로 줄 값이 있다면
+    else {
+      cursor = result[result.length - 2].id;
+    }
+
+    //클라이언트 반환은 hasNext위해 불렀던 추가 데이터 빼고 반환.
+    if (hasNext) {
+      result.pop();
+    }
+
+    const response = new MannequinLookBookCollectionResponseData(result, {
+      take,
+      hasNext,
+      cursor,
+    });
+
+    return response;
+  }
+
+  async getMannequinLookBookDetail(
+    mannequinLookBookRequestCursorPaginationDto: MannequinLookBookRequestCursorPaginationDto,
+    userId: number,
+  ): Promise<MannequinLookBookDetailResponseData> {
+    const result =
+      await this.mannequinLookBookRepository.getMannequinLookBookDetail(
+        mannequinLookBookRequestCursorPaginationDto,
+        userId,
+      );
+
+    //meta data 설정
+
+    let cursor: number = null;
+    let hasNext: boolean;
+    const take = mannequinLookBookRequestCursorPaginationDto.take;
+
+    //take개수보다 작으면 false가 됨.
+    hasNext = result.length > mannequinLookBookRequestCursorPaginationDto.take;
+
+    //다음으로 줄 값이 없다면
+    if (!hasNext) {
+      cursor = null;
+    }
+    //다음으로 줄 값이 있다면
+    else {
+      cursor = result[result.length - 1].id;
+    }
+
+    const response = new MannequinLookBookDetailResponseData(result, {
+      take,
+      cursor,
+      hasNext,
+    });
+
     return response;
   }
 }
