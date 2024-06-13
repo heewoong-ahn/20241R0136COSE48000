@@ -24,16 +24,16 @@ export class Mannequin extends BaseEntity {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column('char', { length: 1, default: 'm' })
-  @ApiProperty({ example: 'm', description: '성별' })
-  sex: string;
+  @Column('int', { default: 0 })
+  @ApiProperty({ example: 0, description: '성별' })
+  sex: number;
 
-  @Column('int', { default: 1 })
-  @ApiProperty({ example: 1, description: '머리 스타일' })
+  @Column('int', { default: 0 })
+  @ApiProperty({ example: 0, description: '머리 스타일' })
   hair: number;
 
-  @Column('int', { default: 1 })
-  @ApiProperty({ example: 1, description: '피부 색상' })
+  @Column('int', { default: 0 })
+  @ApiProperty({ example: 0, description: '피부 색상' })
   skinColor: number;
 
   @Column('decimal', { default: 175.0, scale: 1 })
