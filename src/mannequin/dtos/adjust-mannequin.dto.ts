@@ -15,11 +15,13 @@ export class AdjustMannequinDto {
 
   @ApiProperty({ description: '0 부터 시작하는 index' })
   @IsNotEmpty()
+  @Type(() => Number)
   @IsInt()
   hair: number;
 
   @ApiProperty()
   @IsNotEmpty()
+  @Type(() => Number)
   @IsInt()
   skinColor: number;
 
