@@ -7,6 +7,7 @@ import { UploadClothDto } from './dtos/upload-cloth.dto';
 import { AccessoryRepository } from 'src/repositories/accessories.repository';
 import { Accessory } from 'src/entities/clothes/accessories.entity';
 import { UserAccessorySaveRepository } from 'src/repositories/user-accessory-save.repository';
+import { UserAccessorySave } from 'src/entities/save-clothes/user-accessory-save.entity';
 
 @Injectable()
 export class AccessoryService {
@@ -81,5 +82,14 @@ export class AccessoryService {
       clothId,
       userId,
     );
+  }
+
+  async clippedOrNot(
+    clothId: number,
+    userId: number,
+  ): Promise<UserAccessorySave> {
+    const userAccessorySave =
+      await this.userAccessorySaveRepository.clippedOrNot(clothId, userId);
+    return userAccessorySave;
   }
 }

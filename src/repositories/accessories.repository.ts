@@ -35,6 +35,7 @@ export class AccessoryRepository extends Repository<Accessory> {
     return new ResponseClothDto(
       await this.save(accessory),
       ClothCategory.accessories,
+      false,
     );
   }
 

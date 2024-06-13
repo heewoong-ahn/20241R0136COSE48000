@@ -32,7 +32,11 @@ export class PantRepository extends Repository<Pant> {
       memo: uploadClothDto.memo,
       user: user,
     });
-    return new ResponseClothDto(await this.save(pant), ClothCategory.pants);
+    return new ResponseClothDto(
+      await this.save(pant),
+      ClothCategory.pants,
+      false,
+    );
   }
 
   async deletePant(pant: Pant) {

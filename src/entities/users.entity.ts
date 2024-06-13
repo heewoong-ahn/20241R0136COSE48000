@@ -25,6 +25,7 @@ import { UserLookBookLike } from './user-lookbook-like.entity';
 import { Comment } from './comments.entity';
 import { Follow } from './follows.entity';
 import { UserChatRoom } from './user-chatrooms.entity';
+import { MannequinLookBook } from './mannequin-lookbook.entity';
 
 @Entity()
 export class User extends At {
@@ -104,6 +105,12 @@ export class User extends At {
 
   @OneToMany(() => UserChatRoom, (userChatRoom) => userChatRoom.user)
   userChatRooms: UserChatRoom[];
+
+  @OneToMany(
+    () => MannequinLookBook,
+    (mannequinLookBook) => mannequinLookBook.user,
+  )
+  mannequinLookBooks: MannequinLookBook[];
 
   // @OneToOne(() => Mannequin, (mannequin) => mannequin.user, { cascade: true })
   // mannequin: Mannequin;

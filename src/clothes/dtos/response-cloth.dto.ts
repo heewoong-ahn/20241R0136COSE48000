@@ -27,12 +27,21 @@ export class ResponseClothDto {
   @IsOptional()
   memo?: string;
 
-  constructor(cloth: Top | Pant | Shoe | Accessory, category: ClothCategory) {
+  @ApiProperty({ description: '옷 저장 여부 알리는 metric' })
+  @IsNotEmpty()
+  save: boolean;
+
+  constructor(
+    cloth: Top | Pant | Shoe | Accessory,
+    category: ClothCategory,
+    save: boolean,
+  ) {
     this.id = cloth.id;
     this.URL = cloth.url;
     this.type = cloth.type;
     this.memo = cloth.memo;
     this.category = category;
+    this.save = save;
   }
 }
 

@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  RelationId,
 } from 'typeorm';
 import { At } from './at.entity';
 import { User } from './users.entity';
@@ -37,10 +38,12 @@ export class LookBook extends At {
   likeCnt: number;
 
   @Column('int', { default: 0 })
-  commnentCnt: number;
+  commentCnt: number;
 
   @ManyToOne(() => User, (user) => user.lookbooks)
   user: User;
+  @RelationId((lookbook: LookBook) => lookbook.user)
+  userId: number;
 
   //하나의 바지가 여러 lookbook에 들어갈 수 있음.
   @ManyToOne(() => Pant, (pant) => pant.lookbooks)

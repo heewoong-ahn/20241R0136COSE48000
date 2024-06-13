@@ -92,27 +92,52 @@ export class ClothService {
   async getClothDetail(
     category: ClothCategory,
     id: number,
+    userId: number,
   ): Promise<ResponseClothDto> {
+    let save = false;
     switch (category) {
       case ClothCategory.tops:
+        const userTopSave = await this.topService.clippedOrNot(id, userId);
+        if (userTopSave) {
+          save = true;
+        }
         return new ResponseClothDto(
           await this.topService.getTopDetail(id),
           ClothCategory.tops,
+          save,
         );
       case ClothCategory.pants:
+        const userPantSave = await this.pantService.clippedOrNot(id, userId);
+        if (userPantSave) {
+          save = true;
+        }
         return new ResponseClothDto(
           await this.pantService.getPantDetail(id),
           ClothCategory.pants,
+          save,
         );
       case ClothCategory.shoes:
+        const userShoeSave = await this.shoeService.clippedOrNot(id, userId);
+        if (userShoeSave) {
+          save = true;
+        }
         return new ResponseClothDto(
           await this.shoeService.getShoeDetail(id),
           ClothCategory.shoes,
+          save,
         );
       case ClothCategory.accessories:
+        const userAccessorySave = await this.accessoryService.clippedOrNot(
+          id,
+          userId,
+        );
+        if (userAccessorySave) {
+          save = true;
+        }
         return new ResponseClothDto(
           await this.accessoryService.getAccessoryDetail(id),
           ClothCategory.accessories,
+          save,
         );
       default:
         throw new BadRequestException('해당 카테고리가 존재하지 않습니다.');

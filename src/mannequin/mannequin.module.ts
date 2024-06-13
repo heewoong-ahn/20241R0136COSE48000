@@ -9,6 +9,6 @@ import { MannequinRepository } from 'src/repositories/mannequin.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([Mannequin])],
   controllers: [MannequinController],
-  providers: [MannequinService, JwtAccessStrategy, MannequinRepository],
+  providers: [MannequinService, MannequinRepository],
 })
 export class MannequinModule {}
