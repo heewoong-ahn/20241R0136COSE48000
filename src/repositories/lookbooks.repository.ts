@@ -71,6 +71,8 @@ export class LookBookRepository extends Repository<LookBook> {
 
   async getLookBookCollection(
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    myUserId: number,
+    userId?: number,
   ): Promise<any> {
     const lookbookCollection = this.createQueryBuilder('lookbook')
       .leftJoinAndSelect('lookbook.topLookBooks', 'topLookBook')
@@ -79,6 +81,7 @@ export class LookBookRepository extends Repository<LookBook> {
       .leftJoinAndSelect('accessoryLookBook.accessory', 'accessory')
       .leftJoinAndSelect('lookbook.pant', 'pant')
       .leftJoinAndSelect('lookbook.shoe', 'shoe')
+      .leftJoinAndSelect('lookbook.user', 'user')
       .select([
         'lookbook.id',
         'topLookBook',
@@ -93,74 +96,126 @@ export class LookBookRepository extends Repository<LookBook> {
 
     //첫 return은 매끄러운 화면 전환을 위해 take의 2배의 data를 반환. 이후 take만큼 만환.
     if (!lookBookRequestCursorPaginationDto.cursor) {
-      //검색 keyword가 없다면
-      if (!lookBookRequestCursorPaginationDto.keyword) {
-        result = await lookbookCollection
-          .where('lookbook.show = :show', { show: true })
-          .orderBy('lookbook.id', 'DESC')
-          .take(lookBookRequestCursorPaginationDto.take * 2 + 1)
-          .getMany();
+      //프로필에서의 조회라면
+      if (userId) {
+        //내 프로필이라면
+        if (myUserId == userId) {
+          result = await lookbookCollection
+            .where('user.id = :userId', { userId: userId })
+            .orderBy('lookbook.id', 'DESC')
+            .take(lookBookRequestCursorPaginationDto.take * 2 + 1)
+            .getMany();
+        }
+        //다른 사람 프로필이라면
+        else {
+          result = await lookbookCollection
+            .where('user.id = :userId', { userId: userId })
+            .andWhere('lookbook.show = :show', { show: true })
+            .orderBy('lookbook.id', 'DESC')
+            .take(lookBookRequestCursorPaginationDto.take * 2 + 1)
+            .getMany();
+        }
       }
-      //keyword가 있다면
-      //keyword값이 존재할때만 filter를 해서 불필요한 비용 절감.
+      //프로필에서의 조회가 아니라면
       else {
-        result = await lookbookCollection
-          .where('lookbook.show = :show', { show: true })
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
-                .orWhere('lookbook.title ILIKE :keyword')
-                .orWhere('lookbook.memo ILIKE :keyword')
-                .orWhere('top.type ILIKE :keyword')
-                .orWhere('pant.type ILIKE :keyword')
-                .orWhere('shoe.type ILIKE :keyword')
-                .orWhere('accessory.type ILIKE :keyword');
-            }),
-          )
-          .setParameters({
-            keyword: `%${lookBookRequestCursorPaginationDto.keyword}%`,
-          })
-          .orderBy('lookbook.id', 'DESC')
-          .take(lookBookRequestCursorPaginationDto.take * 2 + 1)
-          .getMany();
+        //검색 keyword가 없다면
+        if (!lookBookRequestCursorPaginationDto.keyword) {
+          result = await lookbookCollection
+            .where('lookbook.show = :show', { show: true })
+            .orderBy('lookbook.id', 'DESC')
+            .take(lookBookRequestCursorPaginationDto.take * 2 + 1)
+            .getMany();
+        }
+        //keyword가 있다면
+        //keyword값이 존재할때만 filter를 해서 불필요한 비용 절감.
+        else {
+          result = await lookbookCollection
+            .where('lookbook.show = :show', { show: true })
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
+                  .orWhere('lookbook.title ILIKE :keyword')
+                  .orWhere('lookbook.memo ILIKE :keyword')
+                  .orWhere('top.type ILIKE :keyword')
+                  .orWhere('pant.type ILIKE :keyword')
+                  .orWhere('shoe.type ILIKE :keyword')
+                  .orWhere('accessory.type ILIKE :keyword');
+              }),
+            )
+            .setParameters({
+              keyword: `%${lookBookRequestCursorPaginationDto.keyword}%`,
+            })
+            .orderBy('lookbook.id', 'DESC')
+            .take(lookBookRequestCursorPaginationDto.take * 2 + 1)
+            .getMany();
+        }
       }
     }
     //cursor값이 있다면 = 2번째 이상 로딩 요청
     else {
-      //keyword가 없다면
-      if (!lookBookRequestCursorPaginationDto.keyword) {
-        result = await lookbookCollection
-          .where('lookbook.id < :cursor', {
-            cursor: lookBookRequestCursorPaginationDto.cursor,
-          })
-          .andWhere('lookbook.show = :show', { show: true })
-          .orderBy('lookbook.id', 'DESC')
-          .take(lookBookRequestCursorPaginationDto.take + 1)
-          .getMany();
+      //프로필에서의 조회라면
+      if (userId) {
+        //내 프로필이라면
+        if (myUserId == userId) {
+          result = await lookbookCollection
+            .where('lookbook.id < :cursor', {
+              cursor: lookBookRequestCursorPaginationDto.cursor,
+            })
+            .andWhere('user.id = :userId', { userId: userId })
+            .orderBy('lookbook.id', 'DESC')
+            .take(lookBookRequestCursorPaginationDto.take + 1)
+            .getMany();
+        }
+        //다른 사람 프로필이라면
+        else {
+          result = await lookbookCollection
+            .where('lookbook.id < :cursor', {
+              cursor: lookBookRequestCursorPaginationDto.cursor,
+            })
+            .andWhere('user.id = :userId', { userId: userId })
+            .andWhere('lookbook.show = :show', { show: true })
+            .orderBy('lookbook.id', 'DESC')
+            .take(lookBookRequestCursorPaginationDto.take + 1)
+            .getMany();
+        }
       }
-      //keyword가 있다면
+      //검색창에서의 조회라면
       else {
-        result = await lookbookCollection
-          .where('lookbook.id < :cursor')
-          .andWhere('lookbook.show = :show', { show: true })
-          .andWhere(
-            new Brackets((qb) => {
-              qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
-                .orWhere('lookbook.title ILIKE :keyword')
-                .orWhere('lookbook.memo ILIKE :keyword')
-                .orWhere('top.type ILIKE :keyword')
-                .orWhere('pant.type ILIKE :keyword')
-                .orWhere('shoe.type ILIKE :keyword')
-                .orWhere('accessory.type ILIKE :keyword');
-            }),
-          )
-          .orderBy('lookbook.id', 'DESC')
-          .take(lookBookRequestCursorPaginationDto.take + 1)
-          .setParameters({
-            cursor: lookBookRequestCursorPaginationDto.cursor,
-            keyword: `%${lookBookRequestCursorPaginationDto.keyword}%`,
-          })
-          .getMany();
+        //keyword가 없다면
+        if (!lookBookRequestCursorPaginationDto.keyword) {
+          result = await lookbookCollection
+            .where('lookbook.id < :cursor', {
+              cursor: lookBookRequestCursorPaginationDto.cursor,
+            })
+            .andWhere('lookbook.show = :show', { show: true })
+            .orderBy('lookbook.id', 'DESC')
+            .take(lookBookRequestCursorPaginationDto.take + 1)
+            .getMany();
+        }
+        //keyword가 있다면
+        else {
+          result = await lookbookCollection
+            .where('lookbook.id < :cursor')
+            .andWhere('lookbook.show = :show', { show: true })
+            .andWhere(
+              new Brackets((qb) => {
+                qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
+                  .orWhere('lookbook.title ILIKE :keyword')
+                  .orWhere('lookbook.memo ILIKE :keyword')
+                  .orWhere('top.type ILIKE :keyword')
+                  .orWhere('pant.type ILIKE :keyword')
+                  .orWhere('shoe.type ILIKE :keyword')
+                  .orWhere('accessory.type ILIKE :keyword');
+              }),
+            )
+            .orderBy('lookbook.id', 'DESC')
+            .take(lookBookRequestCursorPaginationDto.take + 1)
+            .setParameters({
+              cursor: lookBookRequestCursorPaginationDto.cursor,
+              keyword: `%${lookBookRequestCursorPaginationDto.keyword}%`,
+            })
+            .getMany();
+        }
       }
     }
 
@@ -240,9 +295,6 @@ export class LookBookRepository extends Repository<LookBook> {
         })
         .getMany();
     }
-
-    console.log(lookBookRequestCursorPaginationDto.take + 1);
-    console.log(result.length);
     return result;
   }
 }

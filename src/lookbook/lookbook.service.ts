@@ -20,6 +20,7 @@ import { MannequinLookBookRepository } from 'src/repositories/mannequin-lookbook
 import { LookBookRequestCursorPaginationDto } from './dtos/lookbook-request-cursor-pagination.dto';
 import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
 import { LookBookDetailResponseDataDto } from './dtos/lookbook-detail-response-data.dto';
+import { UserRepository } from 'src/repositories/user.repository';
 
 @Injectable()
 export class LookbookService {
@@ -32,6 +33,7 @@ export class LookbookService {
     private readonly commentService: CommentService,
     private readonly s3Service: S3Service,
     private readonly mannequinLookBookRepository: MannequinLookBookRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async saveLookBook(
@@ -191,11 +193,25 @@ export class LookbookService {
 
   async getLookBookCollection(
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    myUserId: number,
+    userUUID?: string,
   ): Promise<LookBookCollectionResponseDataDto> {
-    const result = await this.lookBookRepository.getLookBookCollection(
-      lookBookRequestCursorPaginationDto,
-    );
-
+    let result: any[];
+    //프로필 룩북 불러오기라면
+    if (userUUID) {
+      const user = await this.userRepository.findUserByUUID(userUUID);
+      result = await this.lookBookRepository.getLookBookCollection(
+        lookBookRequestCursorPaginationDto,
+        myUserId,
+        user.id,
+      );
+    } // 검생창이라면
+    else {
+      result = await this.lookBookRepository.getLookBookCollection(
+        lookBookRequestCursorPaginationDto,
+        myUserId,
+      );
+    }
     let cursor: number = null;
     let hasNext: boolean;
     //metadata 설정

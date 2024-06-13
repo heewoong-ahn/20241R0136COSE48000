@@ -108,9 +108,36 @@ export class LookbookController {
   async getLookBookCollection(
     @Query()
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    @Req() req,
   ): Promise<LookBookCollectionResponseDataDto> {
     return await this.lookbookService.getLookBookCollection(
       lookBookRequestCursorPaginationDto,
+      req.user.id,
+    );
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '프로필별 룩북 표지들 불러오기 성공',
+    '프로필 화면에 뜨는 룩북 표지들 불러오는 작업 !!필터링 할 단어가 있으면 안됨.',
+  )
+  @Get('/profile/:userUUID')
+  @ApiResponse({
+    type: LookBookCollectionResponseDataDto,
+  })
+  @ApiQuery({ name: 'keyword', required: false, type: String })
+  @ApiQuery({ name: 'cursor', required: false, type: Number })
+  //Query param은 값을 주지 않으면 undefined가 됨.
+  async getProfileLookBookCollection(
+    @Param('userUUID') userUUID: string,
+    @Query()
+    lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    @Req() req,
+  ): Promise<LookBookCollectionResponseDataDto> {
+    return await this.lookbookService.getLookBookCollection(
+      lookBookRequestCursorPaginationDto,
+      req.user.id,
+      userUUID,
     );
   }
 

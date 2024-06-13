@@ -123,6 +123,7 @@ export class AuthService {
     return {
       message: '로그인 성공',
       nickname: user.nickname,
+      uuid: user.uuid,
       AccessToken: jwtAccess,
       RefreshToken: jwtRefresh,
     };

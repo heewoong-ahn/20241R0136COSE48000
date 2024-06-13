@@ -23,6 +23,7 @@ import { CommentRepository } from 'src/repositories/comment.repository';
 import { S3Service } from 'src/s3/s3.service';
 import { MannequinLookBookRepository } from 'src/repositories/mannequin-lookbooks.repository';
 import { MannequinLookBook } from 'src/entities/mannequin-lookbook.entity';
+import { UserRepository } from 'src/repositories/user.repository';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { MannequinLookBook } from 'src/entities/mannequin-lookbook.entity';
     CommentRepository,
     S3Service,
     MannequinLookBookRepository,
+    UserRepository,
   ],
 })
 export class LookbookModule {}
