@@ -159,4 +159,25 @@ export class LookbookController {
       req.user.id,
     );
   }
+
+  @CustomAuthDecorator(
+    200,
+    '프로필에서 룩북 상세 정보 불러오기 성공',
+    '프로필에서 룩북 상세 정보 불러오는 작업: !!keyword값이 있으면 안됨!!',
+  )
+  @ApiQuery({ name: 'keyword', required: false, type: String })
+  @ApiResponse({ type: LookBookDetailResponseDataDto })
+  @Get('/detail/profile/:userUUID')
+  async getProfileLookBookDetail(
+    @Query()
+    lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    @Req() req,
+    @Param('userUUID') userUUID: string,
+  ): Promise<LookBookDetailResponseDataDto> {
+    return await this.lookbookService.getLookBookDetail(
+      lookBookRequestCursorPaginationDto,
+      req.user.id,
+      userUUID,
+    );
+  }
 }

@@ -224,6 +224,8 @@ export class LookBookRepository extends Repository<LookBook> {
 
   async getLookBookDetail(
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    myUserId: number,
+    userId?: number,
   ) {
     const lookBookDetail = this.createQueryBuilder('lookbook')
       .leftJoinAndSelect('lookbook.user', 'user')
@@ -260,41 +262,71 @@ export class LookBookRepository extends Repository<LookBook> {
 
     let result: any[];
 
-    if (!lookBookRequestCursorPaginationDto.keyword) {
-      result = await lookBookDetail
-        .where('lookbook.id <= :cursor', {
-          cursor: lookBookRequestCursorPaginationDto.cursor,
-        })
-        .andWhere('lookbook.show = :show', { show: true })
-        .orderBy('lookbook.id', 'DESC')
-        .take(lookBookRequestCursorPaginationDto.take + 1)
-        .getMany();
+    //프로필 화면이라면
+    if (userId) {
+      //나의 프로필 화면이라면
+      if (userId == myUserId) {
+        result = await lookBookDetail
+          .where('lookbook.id <= :cursor', {
+            cursor: lookBookRequestCursorPaginationDto.cursor,
+          })
+          .andWhere('user.id = :userId', { userId: userId })
+          .orderBy('lookbook.id', 'DESC')
+          .take(lookBookRequestCursorPaginationDto.take + 1)
+          .getMany();
+      }
+      //다른 사람 프로필 화면이라면
+      else {
+        result = await lookBookDetail
+          .where('lookbook.id <= :cursor', {
+            cursor: lookBookRequestCursorPaginationDto.cursor,
+          })
+          .andWhere('user.id = :userId', { userId: userId })
+          .andWhere('lookbook.show = :show', { show: true })
+          .orderBy('lookbook.id', 'DESC')
+          .take(lookBookRequestCursorPaginationDto.take + 1)
+          .getMany();
+      }
     }
-    //keyword가 있을 때: 피드를 제공할 때 keyword로 검색 후 들어간 경우 keyword로 필터링 된
-    //룩북 collection에서 다음 것을 들고 와야함.
+    //프로필 화면이 아니라면
     else {
-      result = await lookBookDetail
-        .where('lookbook.id <= :cursor')
-        .andWhere('lookbook.show = :show', { show: true })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
-              .orWhere('lookbook.title ILIKE :keyword')
-              .orWhere('lookbook.memo ILIKE :keyword')
-              .orWhere('top.type ILIKE :keyword')
-              .orWhere('pant.type ILIKE :keyword')
-              .orWhere('shoe.type ILIKE :keyword')
-              .orWhere('accessory.type ILIKE :keyword');
-          }),
-        )
-        .orderBy('lookbook.id', 'DESC')
-        .take(lookBookRequestCursorPaginationDto.take + 1)
-        .setParameters({
-          cursor: lookBookRequestCursorPaginationDto.cursor,
-          keyword: `%${lookBookRequestCursorPaginationDto.keyword}%`,
-        })
-        .getMany();
+      if (!lookBookRequestCursorPaginationDto.keyword) {
+        result = await lookBookDetail
+          .where('lookbook.id <= :cursor', {
+            cursor: lookBookRequestCursorPaginationDto.cursor,
+          })
+          .andWhere('lookbook.show = :show', { show: true })
+          .orderBy('lookbook.id', 'DESC')
+          .take(lookBookRequestCursorPaginationDto.take + 1)
+          .getMany();
+      }
+      //keyword가 있을 때: 피드를 제공할 때 keyword로 검색 후 들어간 경우 keyword로 필터링 된
+      //룩북 collection에서 다음 것을 들고 와야함.
+      else {
+        result = await lookBookDetail
+          .where('lookbook.id <= :cursor')
+          .andWhere('lookbook.show = :show', { show: true })
+          .andWhere(
+            new Brackets((qb) => {
+              qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
+                .orWhere('lookbook.title ILIKE :keyword')
+                .orWhere('lookbook.memo ILIKE :keyword')
+                .orWhere('top.type ILIKE :keyword')
+                .orWhere('pant.type ILIKE :keyword')
+                .orWhere('shoe.type ILIKE :keyword')
+                .orWhere('accessory.type ILIKE :keyword');
+            }),
+          )
+          .orderBy('lookbook.id', 'DESC')
+          .take(lookBookRequestCursorPaginationDto.take + 1)
+          .setParameters({
+            cursor: lookBookRequestCursorPaginationDto.cursor,
+            keyword: `%${lookBookRequestCursorPaginationDto.keyword}%`,
+          })
+          .getMany();
+      }
     }
+
     return result;
   }
 }

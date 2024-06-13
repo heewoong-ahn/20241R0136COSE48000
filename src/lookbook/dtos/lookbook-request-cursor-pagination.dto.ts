@@ -37,7 +37,7 @@ export class LookBookRequestCursorPaginationDto {
   @IsOptional()
   cursor?: number = 0;
 
-  @ApiProperty({ example: '반팔', description: '필터링 할 단어' })
+  @ApiProperty({ description: '필터링 할 단어' })
   @IsOptional()
   @IsString()
   keyword?: string | undefined;

@@ -247,11 +247,25 @@ export class LookbookService {
 
   async getLookBookDetail(
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
-    userId: number,
+    myUserId: number,
+    userUUID?: string,
   ): Promise<LookBookDetailResponseDataDto> {
-    const result = await this.lookBookRepository.getLookBookDetail(
-      lookBookRequestCursorPaginationDto,
-    );
+    let result: any[];
+    //프로필창이라면
+    if (userUUID) {
+      const user = await this.userRepository.findUserByUUID(userUUID);
+      result = await this.lookBookRepository.getLookBookDetail(
+        lookBookRequestCursorPaginationDto,
+        myUserId,
+        user.id,
+      );
+    } // 검생창이라면
+    else {
+      result = await this.lookBookRepository.getLookBookDetail(
+        lookBookRequestCursorPaginationDto,
+        myUserId,
+      );
+    }
 
     const withLikeAndSaveAndComment = await Promise.all(
       result.map(async (item) => {
@@ -259,13 +273,13 @@ export class LookbookService {
         let save: boolean = false;
 
         const userLookBookLike =
-          await this.userLookBookLikeRepository.likedOrNot(item.id, userId);
+          await this.userLookBookLikeRepository.likedOrNot(item.id, myUserId);
         if (userLookBookLike) {
           like = true;
         }
 
         const userLookBookSave =
-          await this.userLookBookSaveRepository.clippedOrNot(item.id, userId);
+          await this.userLookBookSaveRepository.clippedOrNot(item.id, myUserId);
         if (userLookBookSave) {
           save = true;
         }
