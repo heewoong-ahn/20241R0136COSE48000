@@ -96,6 +96,7 @@ export class LookBookRepository extends Repository<LookBook> {
       //검색 keyword가 없다면
       if (!lookBookRequestCursorPaginationDto.keyword) {
         result = await lookbookCollection
+          .where('lookbook.show = :show', { show: true })
           .orderBy('lookbook.id', 'DESC')
           .take(lookBookRequestCursorPaginationDto.take * 2 + 1)
           .getMany();
@@ -104,7 +105,8 @@ export class LookBookRepository extends Repository<LookBook> {
       //keyword값이 존재할때만 filter를 해서 불필요한 비용 절감.
       else {
         result = await lookbookCollection
-          .where(
+          .where('lookbook.show = :show', { show: true })
+          .andWhere(
             new Brackets((qb) => {
               qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
                 .orWhere('lookbook.title ILIKE :keyword')
@@ -131,6 +133,7 @@ export class LookBookRepository extends Repository<LookBook> {
           .where('lookbook.id < :cursor', {
             cursor: lookBookRequestCursorPaginationDto.cursor,
           })
+          .andWhere('lookbook.show = :show', { show: true })
           .orderBy('lookbook.id', 'DESC')
           .take(lookBookRequestCursorPaginationDto.take + 1)
           .getMany();
@@ -139,6 +142,7 @@ export class LookBookRepository extends Repository<LookBook> {
       else {
         result = await lookbookCollection
           .where('lookbook.id < :cursor')
+          .andWhere('lookbook.show = :show', { show: true })
           .andWhere(
             new Brackets((qb) => {
               qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")
@@ -177,6 +181,7 @@ export class LookBookRepository extends Repository<LookBook> {
       .select([
         'lookbook.id',
         'user.nickname',
+        'user.uuid',
         'lookbook.title',
         'lookbook.type',
         'lookbook.memo',
@@ -205,6 +210,7 @@ export class LookBookRepository extends Repository<LookBook> {
         .where('lookbook.id <= :cursor', {
           cursor: lookBookRequestCursorPaginationDto.cursor,
         })
+        .andWhere('lookbook.show = :show', { show: true })
         .orderBy('lookbook.id', 'DESC')
         .take(lookBookRequestCursorPaginationDto.take + 1)
         .getMany();
@@ -214,6 +220,7 @@ export class LookBookRepository extends Repository<LookBook> {
     else {
       result = await lookBookDetail
         .where('lookbook.id <= :cursor')
+        .andWhere('lookbook.show = :show', { show: true })
         .andWhere(
           new Brackets((qb) => {
             qb.where("array_to_string(lookbook.type, ',') ILIKE :keyword")

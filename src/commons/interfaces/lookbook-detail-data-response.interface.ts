@@ -19,6 +19,7 @@ export interface LookBookData {
 }
 
 export interface UserData {
+  uuid: string;
   nickname: string;
   like: boolean;
   save: boolean;
@@ -35,4 +36,5 @@ export interface CommentData {
   parentId: number | null;
   content: string;
   writer?: string | null;
+  writerUUID?: string | null;
 }
