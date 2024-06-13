@@ -14,9 +14,9 @@ export class Follow extends BaseEntity {
 
   //팔로우 당하는 사람
   @ManyToOne(() => User, (user) => user.followers)
-  followed_id: User;
+  followed: User;
 
   //팔로잉 하는 사람
-  @ManyToOne(() => User, (user) => user.comments)
-  follower_id: User;
+  @ManyToOne(() => User, (user) => user.followings)
+  follower: User;
 }

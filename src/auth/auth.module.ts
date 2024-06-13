@@ -31,7 +31,7 @@ import { ChatRoom } from 'src/entities/chatrooms.entity';
     //     },
     //   }),
     // }),
-    TypeOrmModule.forFeature([User, Follow, UserChatRoom, Chat, ChatRoom]),
+    TypeOrmModule.forFeature([User, UserChatRoom, Chat, ChatRoom]),
     JwtModule.register({}),
   ],
   controllers: [AuthController],
