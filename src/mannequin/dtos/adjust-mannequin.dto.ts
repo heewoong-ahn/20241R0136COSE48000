@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
@@ -10,20 +10,21 @@ import {
 } from 'class-validator';
 
 export class AdjustMannequinDto {
-  @ApiProperty()
+  @ApiProperty({ description: '0: 남자, 1:여자' })
   @IsNotEmpty()
-  @IsString()
-  @MinLength(1)
-  @MaxLength(1)
-  sex: string;
+  @Type(() => Number)
+  @IsInt()
+  sex: number;
 
-  @ApiProperty()
+  @ApiProperty({ description: '0 부터 시작하는 index' })
   @IsNotEmpty()
+  @Type(() => Number)
   @IsInt()
   hair: number;
 
   @ApiProperty()
   @IsNotEmpty()
+  @Type(() => Number)
   @IsInt()
   skinColor: number;
 

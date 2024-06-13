@@ -27,6 +27,7 @@ import { CustomAuthDecorator } from 'src/commons/decorators/auth-swagger.decorat
 import { FileInterceptor } from '@nestjs/platform-express';
 import { LookBookRequestCursorPaginationDto } from './dtos/lookbook-request-cursor-pagination.dto';
 import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
+import { LookBookDetailResponseDataDto } from './dtos/lookbook-detail-response-data.dto';
 
 @Controller('lookbook')
 @ApiTags('룩북 작업 api')
@@ -116,15 +117,16 @@ export class LookbookController {
   @CustomAuthDecorator(
     200,
     '룩북 상세 정보 불러오기 성공',
-    '룩북 상세 정보 불러오는 작업',
+    '룩북 상세 정보 불러오는 작업: like와 save는 유저가 해당 룩북을 좋아요나 저장했는지를 나타내고, 댓글은 최신순 나열을 default로 반환.',
   )
   @ApiQuery({ name: 'keyword', required: false, type: String })
+  @ApiResponse({ type: LookBookDetailResponseDataDto })
   @Get('/detail')
   async getLookBookDetail(
     @Query()
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
     @Req() req,
-  ) {
+  ): Promise<LookBookDetailResponseDataDto> {
     return await this.lookbookService.getLookBookDetail(
       lookBookRequestCursorPaginationDto,
       req.user.id,

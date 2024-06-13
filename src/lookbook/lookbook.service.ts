@@ -19,6 +19,7 @@ import { S3Service } from 'src/s3/s3.service';
 import { MannequinLookBookRepository } from 'src/repositories/mannequin-lookbooks.repository';
 import { LookBookRequestCursorPaginationDto } from './dtos/lookbook-request-cursor-pagination.dto';
 import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
+import { LookBookDetailResponseDataDto } from './dtos/lookbook-detail-response-data.dto';
 
 @Injectable()
 export class LookbookService {
@@ -231,7 +232,7 @@ export class LookbookService {
   async getLookBookDetail(
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
     userId: number,
-  ) {
+  ): Promise<LookBookDetailResponseDataDto> {
     const result = await this.lookBookRepository.getLookBookDetail(
       lookBookRequestCursorPaginationDto,
     );
@@ -256,7 +257,7 @@ export class LookbookService {
         const commentCollection =
           await this.commentService.getCommentCollection(item.id);
 
-        return { ...item, like: like, save: save, comment: commentCollection };
+        return { ...item, like: like, save: save, comments: commentCollection };
       }),
     );
 
@@ -278,12 +279,10 @@ export class LookbookService {
       cursor = result[result.length - 1].id;
     }
 
-    const withMeta = {
+    const response = new LookBookDetailResponseDataDto(
       withLikeAndSaveAndComment,
-      cursor: cursor,
-      hasNext: hasNext,
-      take: take,
-    };
-    return withMeta;
+      { take, cursor, hasNext },
+    );
+    return response;
   }
 }

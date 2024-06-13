@@ -21,7 +21,7 @@ class LookBookResponseDataTransformClass
   implements LookBookCollectionDataTransform
 {
   @ApiProperty()
-  id: number;
+  lookbookId: number;
 
   @ApiProperty({ type: UrlCollection })
   tops: UrlCollection;
@@ -36,7 +36,7 @@ class LookBookResponseDataTransformClass
   shoe: UrlUni;
 
   constructor(item: any) {
-    this.id = item.id;
+    this.lookbookId = item.id;
     this.tops = {
       urls: item.topLookBooks.map((topLookBook) => topLookBook.top.url),
     };

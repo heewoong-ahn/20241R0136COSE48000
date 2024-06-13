@@ -31,9 +31,11 @@ export class CommentRepository extends Repository<Comment> {
         'comment.id',
         'comment.content',
         'comment.parentCommentId',
+        'comment.deletedAt',
       ])
       .where('comment.lookbook.id = :lookbookId', { lookbookId })
       .withDeleted()
+      .orderBy('comment.id', 'DESC')
       .getMany();
 
     return commentCollection;
@@ -86,7 +88,7 @@ export class CommentRepository extends Repository<Comment> {
     const filterDeletedCommentCollection = commentCollection.map((comment) => {
       //삭제된 댓글이면
       if (comment.deletedAt != null) {
-        comment.user = null;
+        comment.user.nickname = null;
       }
       return comment;
     });

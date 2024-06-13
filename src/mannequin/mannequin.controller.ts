@@ -10,7 +10,11 @@ import { Mannequin } from 'src/entities/mannequins.entity';
 export class MannequinController {
   constructor(private readonly mannequinService: MannequinService) {}
 
-  @CustomAuthDecorator(200, '마네킹 수정 성공', '마네킹 수정')
+  @CustomAuthDecorator(
+    200,
+    '마네킹 수정 성공',
+    '마네킹 수정: index는 0부터 시작하고 남자는 =0 여자는 =1',
+  )
   @Put('/me')
   async adjustMannequin(
     @Body() adjustMannequinDto: AdjustMannequinDto,
