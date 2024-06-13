@@ -1,17 +1,9 @@
 import { ParseArrayPipe, UsePipes } from '@nestjs/common';
 import { ApiProperty, PickType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import {
-  IsArray,
-  IsBoolean,
-  IsInt,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class LookBookRequestCursorPaginationDto {
+export class MannequinLookBookRequestCursorPaginationDto {
   @ApiProperty({
     example: 1,
     description:
@@ -25,10 +17,7 @@ export class LookBookRequestCursorPaginationDto {
   @ApiProperty({
     description: `다음 요청에 쓰일 커서값,
     피드: 
-    - 로딩하려는 룩북의 id = cursor값으로 전송, 이후에는 백엔드에서 수신받은 cursor값으로 요청.
-    검색창: 
-    - 데이터 첫 로딩때만 값을 지정해 주지 않음, 이후에는 백엔드에서 수신받은 cursor값으로 요청.
-    - 검색 단어를 바꿀 때도 cursor값은 빈 값으로 초기화 되어야 함.
+    - 로딩하려는 마네킹룩북의 id = cursor값으로 전송, 이후에는 백엔드에서 수신받은 cursor값으로 요청.
     `,
   })
   @Type(() => Number)
@@ -36,9 +25,4 @@ export class LookBookRequestCursorPaginationDto {
   @IsInt()
   @IsOptional()
   cursor?: number = 0;
-
-  @ApiProperty({ description: '필터링 할 단어' })
-  @IsOptional()
-  @IsString()
-  keyword?: string | undefined;
 }

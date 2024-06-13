@@ -10,6 +10,7 @@ import { ClothModule } from './clothes/cloth.module';
 import { LookbookModule } from './lookbook/lookbook.module';
 import { CommentModule } from './comment/comment.module';
 import { FollowModule } from './follow/follow.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { FollowModule } from './follow/follow.module';
     LookbookModule,
     CommentModule,
     FollowModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

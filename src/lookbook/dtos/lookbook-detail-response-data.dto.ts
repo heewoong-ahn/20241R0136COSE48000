@@ -36,6 +36,13 @@ class LookBookDataClass implements LookBookData {
 }
 
 class UserDataClass implements UserData {
+  @ApiProperty({
+    example:
+      'e4d3a0d5-b068-4486-ba9b-34fe6536025d //uuid통해서 룩북 작성자의 프로필 들어갈 수 있음.',
+    description: 'uuid',
+  })
+  uuid: string;
+
   @ApiProperty({ example: '주영', description: '닉네임' })
   nickname: string;
 
@@ -87,6 +94,15 @@ class CommentDataClass implements CommentData {
     nullable: true,
   })
   writer?: string | null;
+
+  @ApiProperty({
+    example:
+      'e4d3a0d5-b068-4486-ba9b-34fe6536025d //uuid통해서 해당 작성자의 프로필 들어갈 수 있음.',
+    description: '작성자의 UUID',
+    required: false,
+    nullable: true,
+  })
+  writerUUID?: string | null;
 }
 
 class LookBookDetailDataTransformClass implements LookBookDetailDataTransform {
@@ -121,6 +137,7 @@ class LookBookDetailDataTransformClass implements LookBookDetailDataTransform {
       commentCnt: item.commentCnt,
     };
     this.user = {
+      uuid: item.user.uuid,
       nickname: item.user.nickname,
       like: item.like,
       save: item.save,
@@ -150,6 +167,7 @@ class LookBookDetailDataTransformClass implements LookBookDetailDataTransform {
       parentId: comment.parentCommentId,
       content: comment.content,
       writer: comment.user.nickname,
+      writerUUID: comment.user.uuid,
     }));
   }
 }

@@ -28,6 +28,7 @@ export class CommentRepository extends Repository<Comment> {
       .leftJoinAndSelect('comment.user', 'user')
       .select([
         'user.nickname',
+        'user.uuid',
         'comment.id',
         'comment.content',
         'comment.parentCommentId',
@@ -89,6 +90,7 @@ export class CommentRepository extends Repository<Comment> {
       //삭제된 댓글이면
       if (comment.deletedAt != null) {
         comment.user.nickname = null;
+        comment.user.uuid = null;
       }
       return comment;
     });

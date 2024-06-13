@@ -28,6 +28,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { LookBookRequestCursorPaginationDto } from './dtos/lookbook-request-cursor-pagination.dto';
 import { LookBookCollectionResponseDataDto } from './dtos/lookbook-collection-response-data.dto';
 import { LookBookDetailResponseDataDto } from './dtos/lookbook-detail-response-data.dto';
+import { MannequinLookBookRequestCursorPaginationDto } from './dtos/mannequin-lookbook-request-cursor-pagination.dto';
+import { MannequinLookBookCollectionResponseData } from './dtos/mannequin-lookbook-collection-response-data.dto';
+import { MannequinLookBookDetailResponseData } from './dtos/mannequin-lookbook-detail-response-data.dto';
 
 @Controller('lookbook')
 @ApiTags('룩북 작업 api')
@@ -108,9 +111,36 @@ export class LookbookController {
   async getLookBookCollection(
     @Query()
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    @Req() req,
   ): Promise<LookBookCollectionResponseDataDto> {
     return await this.lookbookService.getLookBookCollection(
       lookBookRequestCursorPaginationDto,
+      req.user.id,
+    );
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '프로필별 룩북 표지들 불러오기 성공',
+    '프로필 화면에 뜨는 룩북 표지들 불러오는 작업 !!필터링 할 단어가 있으면 안됨.',
+  )
+  @Get('/profile/:userUUID')
+  @ApiResponse({
+    type: LookBookCollectionResponseDataDto,
+  })
+  @ApiQuery({ name: 'keyword', required: false, type: String })
+  @ApiQuery({ name: 'cursor', required: false, type: Number })
+  //Query param은 값을 주지 않으면 undefined가 됨.
+  async getProfileLookBookCollection(
+    @Param('userUUID') userUUID: string,
+    @Query()
+    lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    @Req() req,
+  ): Promise<LookBookCollectionResponseDataDto> {
+    return await this.lookbookService.getLookBookCollection(
+      lookBookRequestCursorPaginationDto,
+      req.user.id,
+      userUUID,
     );
   }
 
@@ -129,6 +159,63 @@ export class LookbookController {
   ): Promise<LookBookDetailResponseDataDto> {
     return await this.lookbookService.getLookBookDetail(
       lookBookRequestCursorPaginationDto,
+      req.user.id,
+    );
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '프로필에서 룩북 상세 정보 불러오기 성공',
+    '프로필에서 룩북 상세 정보 불러오는 작업: !!keyword값이 있으면 안됨!!',
+  )
+  @ApiQuery({ name: 'keyword', required: false, type: String })
+  @ApiResponse({ type: LookBookDetailResponseDataDto })
+  @Get('/detail/profile/:userUUID')
+  async getProfileLookBookDetail(
+    @Query()
+    lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
+    @Req() req,
+    @Param('userUUID') userUUID: string,
+  ): Promise<LookBookDetailResponseDataDto> {
+    return await this.lookbookService.getLookBookDetail(
+      lookBookRequestCursorPaginationDto,
+      req.user.id,
+      userUUID,
+    );
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '내 프로필 마네킹-룩북 표지 불러오기 성공.',
+    '내 프로필 마네킹-룩북 표지 불러오기 작업.',
+  )
+  @Get('/mannequin-lookbook')
+  @ApiQuery({ name: 'cursor', required: false, type: Number })
+  //Query param은 값을 주지 않으면 undefined가 됨.
+  async getMannequinLookBookCollection(
+    @Query()
+    mannequinLookBookRequestCursorPaginationDto: MannequinLookBookRequestCursorPaginationDto,
+    @Req() req,
+  ): Promise<MannequinLookBookCollectionResponseData> {
+    return await this.lookbookService.getMannequinLookBookCollection(
+      mannequinLookBookRequestCursorPaginationDto,
+      req.user.id,
+    );
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '내 프로필 마네킹-룩북 상세 불러오기 성공.',
+    '내 프로필 마네킹-룩북 상세 불러오기 작업.',
+  )
+  @Get('/mannequin-lookbook/detail')
+  async getMannequinLookBookDetail(
+    @Query()
+    mannequinLookBookRequestCursorPaginationDto: MannequinLookBookRequestCursorPaginationDto,
+    @Req() req,
+  ): Promise<MannequinLookBookDetailResponseData> {
+    return await this.lookbookService.getMannequinLookBookDetail(
+      mannequinLookBookRequestCursorPaginationDto,
       req.user.id,
     );
   }
