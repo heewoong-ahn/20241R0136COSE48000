@@ -44,7 +44,6 @@ export class LookbookService {
     saveLookBookDto: SaveLookBookDto,
     userId: number,
   ) {
-    console.log(saveLookBookDto.type);
     const { topIds, accessoryIds, pantId, shoeId, ...saveLookbookData } =
       saveLookBookDto;
 
@@ -62,15 +61,17 @@ export class LookbookService {
       await this.topLookBookRepository.topToLookbook(top, lookbook);
     });
 
-    accessoryIds.map(async (accessoryId) => {
-      const accessory = new Accessory();
-      accessory.id = accessoryId;
+    if (!(accessoryIds.length == 0)) {
+      accessoryIds.map(async (accessoryId) => {
+        const accessory = new Accessory();
+        accessory.id = accessoryId;
 
-      await this.accessoryLookBookRepository.accessoryToLookbook(
-        accessory,
-        lookbook,
-      );
-    });
+        await this.accessoryLookBookRepository.accessoryToLookbook(
+          accessory,
+          lookbook,
+        );
+      });
+    }
 
     //마네킹-룩북 사진 저장.
 

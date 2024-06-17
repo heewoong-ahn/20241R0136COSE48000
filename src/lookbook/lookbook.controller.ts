@@ -46,7 +46,6 @@ export class LookbookController {
     @Body() saveLookBookDto: SaveLookBookDto,
     @Req() req,
   ) {
-    console.log(saveLookBookDto.type);
     return await this.lookbookService.saveLookBook(
       file,
       saveLookBookDto,

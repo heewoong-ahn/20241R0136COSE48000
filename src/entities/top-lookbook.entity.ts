@@ -16,6 +16,8 @@ export class TopLookBook extends BaseEntity {
   @ManyToOne(() => Top, (top) => top.topLookBooks)
   top: Top;
 
-  @ManyToOne(() => LookBook, (lookbook) => lookbook.topLookBooks)
+  @ManyToOne(() => LookBook, (lookbook) => lookbook.topLookBooks, {
+    onDelete: 'CASCADE',
+  })
   lookbook: LookBook;
 }
