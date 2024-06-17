@@ -1,5 +1,5 @@
 import { ParseArrayPipe, UsePipes } from '@nestjs/common';
-import { ApiProperty, PickType } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PickType } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
@@ -38,19 +38,19 @@ export class SaveLookBookDto {
   @IsInt()
   shoeId: number;
 
-  @ApiProperty({ type: [Number] })
+  @ApiPropertyOptional({ type: [Number] })
   @Transform(({ value }) => {
     if (Array.isArray(value)) {
       return value.map(Number); // 이미 배열인 경우 각 요소를 숫자로 변환
-    } else if (typeof value === 'string') {
+    } else if (typeof value === 'string' && value.trim() !== '') {
       return value.split(',').map(Number); // 문자열인 경우 쉼표로 분리하여 배열로 변환
     }
     return [];
   })
-  @IsNotEmpty({ each: true })
+  @IsOptional({ each: true })
   @IsInt({ each: true })
   @IsArray()
-  accessoryIds: number[];
+  accessoryIds?: number[];
 
   @ApiProperty()
   @Type(() => Boolean)
