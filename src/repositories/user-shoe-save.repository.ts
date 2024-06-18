@@ -31,4 +31,14 @@ export class UserShoeSaveRepository extends Repository<UserShoeSave> {
   async notClipShoe(userShoeSave: UserShoeSave) {
     await this.remove(userShoeSave);
   }
+
+  async getClippedShoeCollection(userId: number): Promise<UserShoeSave[]> {
+    console.log(userId);
+    const clippedShoeCollection = this.find({
+      where: { user: { id: userId } },
+      relations: ['shoe'],
+      withDeleted: true,
+    });
+    return clippedShoeCollection;
+  }
 }

@@ -89,6 +89,28 @@ export class ClothService {
     }
   }
 
+  async getClippedClothCollection(
+    category: ClothCategory,
+    userId: number,
+  ): Promise<
+    Partial<Top>[] | Partial<Pant>[] | Partial<Shoe>[] | Partial<Accessory>[]
+  > {
+    switch (category) {
+      case ClothCategory.tops:
+        return await this.topService.getClippedTopCollection(userId);
+      case ClothCategory.pants:
+        return await this.pantService.getClippedPantCollection(userId);
+      case ClothCategory.shoes:
+        return await this.shoeService.getClippedShoeCollection(userId);
+      case ClothCategory.accessories:
+        return await this.accessoryService.getClippedAccessoryCollection(
+          userId,
+        );
+      default:
+        throw new BadRequestException('해당 카테고리가 존재하지 않습니다.');
+    }
+  }
+
   async getClothDetail(
     category: ClothCategory,
     id: number,

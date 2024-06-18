@@ -112,6 +112,30 @@ export class ClothController {
     return await this.clothService.getClothDetail(category, id, req.user.id);
   }
 
+  @CustomAuthDecorator(
+    200,
+    '해당 카테고리 찜한 옷 전체 불러오기 성공',
+    '해당 카테고리의 찜한 모든 옷 불러오기 작업',
+  )
+  @ApiResponse({ type: ResponseClothCollectionDto, isArray: true })
+  @ApiParam({
+    name: 'category',
+    enum: ClothCategory,
+    description: '해당 의류 카테고리 명시',
+  })
+  @Get('/clips/all/:category')
+  async getClippedClothCollection(
+    @Param('category', new ParseEnumPipe(ClothCategory))
+    category: ClothCategory,
+    @Req() req,
+  ) {
+    console.log(`Received category: ${category}`);
+    return await this.clothService.getClippedClothCollection(
+      category,
+      req.user.id,
+    );
+  }
+
   //post기능과 delete을 한 곳에 둔게 restful하지 않음. front에서 찜 여부 체크해서 다른 endpoint호출하게 해야하나?
   @CustomAuthDecorator(201, '옷 찜/찜 해제 성공', '옷 찜/찜 해제 작업')
   @ApiParam({
