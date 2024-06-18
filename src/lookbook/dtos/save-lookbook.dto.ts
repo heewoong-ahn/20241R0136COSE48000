@@ -50,7 +50,7 @@ export class SaveLookBookDto {
   @IsOptional({ each: true })
   @IsInt({ each: true })
   @IsArray()
-  accessoryIds?: number[];
+  accessoryIds?: number[] = [];
 
   @ApiProperty()
   @Type(() => Boolean)
