@@ -16,6 +16,9 @@ export class Chat extends At {
   @Column('text')
   content: string;
 
+  @Column('boolean', { default: false })
+  read: boolean;
+
   @ManyToOne(() => UserChatRoom, (userChatRoom) => userChatRoom.chats)
   userChatRoom: UserChatRoom;
 }

@@ -8,10 +8,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtAccessStrategy } from './strategies/jwt-access';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh';
 import { JwtModule } from '@nestjs/jwt';
-import { Follow } from 'src/entities/follows.entity';
-import { UserChatRoom } from 'src/entities/user-chatrooms.entity';
-import { Chat } from 'src/entities/chats.entity';
-import { ChatRoom } from 'src/entities/chatrooms.entity';
 
 @Global()
 @Module({
@@ -31,7 +27,7 @@ import { ChatRoom } from 'src/entities/chatrooms.entity';
     //     },
     //   }),
     // }),
-    TypeOrmModule.forFeature([User, UserChatRoom, Chat, ChatRoom]),
+    TypeOrmModule.forFeature([User]),
     JwtModule.register({}),
   ],
   controllers: [AuthController],
