@@ -53,6 +53,22 @@ export class AccessoryService {
     return urlAccessoryCollection;
   }
 
+  async getClippedAccessoryCollection(
+    userId: number,
+  ): Promise<Partial<Accessory>[]> {
+    const clippedAccessoryCollection =
+      await this.userAccessorySaveRepository.getClippedAccessoryCollection(
+        userId,
+      );
+    const urlClippedAccessoryCollection = clippedAccessoryCollection.map(
+      (userAccessorySave) => ({
+        id: userAccessorySave.accessory.id,
+        url: userAccessorySave.accessory.url,
+      }),
+    );
+    return urlClippedAccessoryCollection;
+  }
+
   async getAccessoryDetail(clothId: number): Promise<Accessory> {
     const accessory = await this.accessoryRepository.findAccessoryById(clothId);
 

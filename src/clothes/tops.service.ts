@@ -46,6 +46,16 @@ export class TopService {
     return urlTopCollection;
   }
 
+  async getClippedTopCollection(userId: number): Promise<Partial<Top>[]> {
+    const clippedTopCollection =
+      await this.userTopSaveRepository.getClippedTopCollection(userId);
+    const urlClippedTopCollection = clippedTopCollection.map((userTopSave) => ({
+      id: userTopSave.top.id,
+      url: userTopSave.top.url,
+    }));
+    return urlClippedTopCollection;
+  }
+
   async getTopDetail(clothId: number): Promise<Top> {
     const top = await this.topRepository.findTopById(clothId);
 

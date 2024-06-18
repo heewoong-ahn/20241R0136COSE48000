@@ -46,6 +46,18 @@ export class PantService {
     return urlPantCollection;
   }
 
+  async getClippedPantCollection(userId: number): Promise<Partial<Pant>[]> {
+    const clippedPantCollection =
+      await this.userPantSaveRepository.getClippedPantCollection(userId);
+    const urlClippedPantCollection = clippedPantCollection.map(
+      (userPantSave) => ({
+        id: userPantSave.pant.id,
+        url: userPantSave.pant.url,
+      }),
+    );
+    return urlClippedPantCollection;
+  }
+
   async getPantDetail(clothId: number): Promise<Pant> {
     const pant = await this.pantRepository.findPantById(clothId);
 
