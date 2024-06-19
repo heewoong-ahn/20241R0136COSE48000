@@ -265,7 +265,8 @@ export class LookbookService {
   async getLookBookDetail(
     lookBookRequestCursorPaginationDto: LookBookRequestCursorPaginationDto,
     myUserId: number,
-    userUUID?: string,
+    userUUID?: string, //프로필에서 룩북 눌러서 상세정보 띄울 때, 스크롤 했을 때 다음것이 나오도록 하기 위한 값으로 쓰임.
+    //keyword처럼 동작한다고 보면 됨.
   ): Promise<LookBookDetailResponseDataDto> {
     let result: any[];
     //프로필창이라면

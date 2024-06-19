@@ -53,12 +53,12 @@ export class ClippedLookBookCollectionResponseDataDto {
   //type에 interace는 들어가지 못함.
   @ApiProperty({ type: [ClippedLookBookResponseDataTransformClass] })
   @IsArray()
-  readonly lookBookCollection: LookBookCollectionDataTransform[];
+  readonly clippedLookBookCollection: LookBookCollectionDataTransform[];
 
   constructor(data: any[]) {
     // this.lookBookCollection = transformData(data);
 
-    this.lookBookCollection = data.map(
+    this.clippedLookBookCollection = data.map(
       (item) => new ClippedLookBookResponseDataTransformClass(item),
     );
   }

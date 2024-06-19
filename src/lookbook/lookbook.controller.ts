@@ -101,6 +101,17 @@ export class LookbookController {
     return await this.lookbookService.getClippedLookBookCollection(req.user.id);
   }
 
+  //해당 작업은 찜한 룩북 미리보기 커서기반 페이지네이션으로 적용 후 적용하기.
+  //현재는 검색창에서 룩북 상세정보 띄우기로 대체. 배열의 첫번째 값만 쓰기.
+
+  // @CustomAuthDecorator(
+  //   200,
+  //   '찜한 룩북 상세정보 가져오기 성공',
+  //   '찜한 룩북 상세정보 가져오기 작업',
+  // )
+  // @Get('/clip/detail/:lookbookId')
+  // async getClippedLookBookDetail(@Req() req) {}
+
   @CustomAuthDecorator(
     200,
     '룩북 좋아요/좋아요해제 성공',
