@@ -31,6 +31,7 @@ import { LookBookDetailResponseDataDto } from './dtos/lookbook-detail-response-d
 import { MannequinLookBookRequestCursorPaginationDto } from './dtos/mannequin-lookbook-request-cursor-pagination.dto';
 import { MannequinLookBookCollectionResponseData } from './dtos/mannequin-lookbook-collection-response-data.dto';
 import { MannequinLookBookDetailResponseData } from './dtos/mannequin-lookbook-detail-response-data.dto';
+import { ClippedLookBookCollectionResponseDataDto } from './dtos/clipped-lookbook-collection-response-data.dto';
 
 @Controller('lookbook')
 @ApiTags('룩북 작업 api')
@@ -84,6 +85,32 @@ export class LookbookController {
   async clipNotClip(@Req() req, @Param('lookbookId') lookbookId: number) {
     return await this.lookbookService.clipNotClip(lookbookId, req.user.id);
   }
+
+  @CustomAuthDecorator(
+    200,
+    '찜한 룩북 미리보기 가져오기 성공',
+    '찜한 룩북 미리보기 가져오기 작업',
+  )
+  @ApiResponse({
+    type: ClippedLookBookCollectionResponseDataDto,
+  })
+  @Get('/clip/all')
+  async getClippedLookBookCollection(
+    @Req() req,
+  ): Promise<ClippedLookBookCollectionResponseDataDto> {
+    return await this.lookbookService.getClippedLookBookCollection(req.user.id);
+  }
+
+  //해당 작업은 찜한 룩북 미리보기 커서기반 페이지네이션으로 적용 후 적용하기.
+  //현재는 검색창에서 룩북 상세정보 띄우기로 대체. 배열의 첫번째 값만 쓰기.
+
+  // @CustomAuthDecorator(
+  //   200,
+  //   '찜한 룩북 상세정보 가져오기 성공',
+  //   '찜한 룩북 상세정보 가져오기 작업',
+  // )
+  // @Get('/clip/detail/:lookbookId')
+  // async getClippedLookBookDetail(@Req() req) {}
 
   @CustomAuthDecorator(
     200,
