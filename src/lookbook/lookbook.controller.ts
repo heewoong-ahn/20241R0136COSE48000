@@ -31,6 +31,7 @@ import { LookBookDetailResponseDataDto } from './dtos/lookbook-detail-response-d
 import { MannequinLookBookRequestCursorPaginationDto } from './dtos/mannequin-lookbook-request-cursor-pagination.dto';
 import { MannequinLookBookCollectionResponseData } from './dtos/mannequin-lookbook-collection-response-data.dto';
 import { MannequinLookBookDetailResponseData } from './dtos/mannequin-lookbook-detail-response-data.dto';
+import { ClippedLookBookCollectionResponseDataDto } from './dtos/clipped-lookbook-collection-response-data.dto';
 
 @Controller('lookbook')
 @ApiTags('룩북 작업 api')
@@ -83,6 +84,21 @@ export class LookbookController {
   @Put('/clip/:lookbookId')
   async clipNotClip(@Req() req, @Param('lookbookId') lookbookId: number) {
     return await this.lookbookService.clipNotClip(lookbookId, req.user.id);
+  }
+
+  @CustomAuthDecorator(
+    200,
+    '찜한 룩북 미리보기 가져오기 성공',
+    '찜한 룩북 미리보기 가져오기 작업',
+  )
+  @ApiResponse({
+    type: ClippedLookBookCollectionResponseDataDto,
+  })
+  @Get('/clip/all')
+  async getClippedLookBookCollection(
+    @Req() req,
+  ): Promise<ClippedLookBookCollectionResponseDataDto> {
+    return await this.lookbookService.getClippedLookBookCollection(req.user.id);
   }
 
   @CustomAuthDecorator(

@@ -36,4 +36,33 @@ export class UserLookBookSaveRepository extends Repository<UserLookBookSave> {
     await this.remove(userLookBookSave);
     return;
   }
+
+  async getClippedLookBookCollection(userId: number) {
+    const clippedLookBookCollection = await this.createQueryBuilder(
+      'userLookBookSave',
+    )
+      .leftJoinAndSelect('userLookBookSave.lookbook', 'lookbook')
+      .leftJoinAndSelect('lookbook.topLookBooks', 'topLookBook')
+      .leftJoinAndSelect('topLookBook.top', 'top')
+      .leftJoinAndSelect('lookbook.accessoryLookBooks', 'accessoryLookBook')
+      .leftJoinAndSelect('accessoryLookBook.accessory', 'accessory')
+      .leftJoinAndSelect('lookbook.pant', 'pant')
+      .leftJoinAndSelect('lookbook.shoe', 'shoe')
+      .leftJoinAndSelect('lookbook.user', 'user')
+      .select([
+        'userLookBookSave.id',
+        'lookbook.id',
+        'topLookBook',
+        'top.url',
+        'accessoryLookBook',
+        'accessory.url',
+        'pant.url',
+        'shoe.url',
+      ])
+      .where('user.id = :userId', { userId: userId })
+      .orderBy('lookbook.id', 'DESC')
+      .getMany();
+
+    return clippedLookBookCollection;
+  }
 }

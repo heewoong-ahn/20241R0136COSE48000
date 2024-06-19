@@ -24,6 +24,7 @@ import { UserRepository } from 'src/repositories/user.repository';
 import { MannequinLookBookRequestCursorPaginationDto } from './dtos/mannequin-lookbook-request-cursor-pagination.dto';
 import { MannequinLookBookCollectionResponseData } from './dtos/mannequin-lookbook-collection-response-data.dto';
 import { MannequinLookBookDetailResponseData } from './dtos/mannequin-lookbook-detail-response-data.dto';
+import { ClippedLookBookCollectionResponseDataDto } from './dtos/clipped-lookbook-collection-response-data.dto';
 
 @Injectable()
 export class LookbookService {
@@ -143,6 +144,18 @@ export class LookbookService {
     return await this.userLookBookLikeRepository.likeLookBook(
       lookbookId,
       userId,
+    );
+  }
+
+  async getClippedLookBookCollection(
+    userId: number,
+  ): Promise<ClippedLookBookCollectionResponseDataDto> {
+    const clippedLookBookCollection =
+      await this.userLookBookSaveRepository.getClippedLookBookCollection(
+        userId,
+      );
+    return new ClippedLookBookCollectionResponseDataDto(
+      clippedLookBookCollection,
     );
   }
 
