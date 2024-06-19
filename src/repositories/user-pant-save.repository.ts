@@ -31,4 +31,15 @@ export class UserPantSaveRepository extends Repository<UserPantSave> {
   async notClipPant(userPantSave: UserPantSave) {
     await this.remove(userPantSave);
   }
+
+  async getClippedPantCollection(userId: number): Promise<UserPantSave[]> {
+    console.log(userId);
+    const clippedPantCollection = await this.find({
+      where: { user: { id: userId } },
+      relations: ['pant'],
+      withDeleted: true,
+    });
+    console.log(clippedPantCollection);
+    return clippedPantCollection;
+  }
 }

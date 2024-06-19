@@ -32,4 +32,14 @@ export class UserTopSaveRepository extends Repository<UserTopSave> {
   async notClipTop(userTopSave: UserTopSave) {
     await this.remove(userTopSave);
   }
+
+  async getClippedTopCollection(userId: number): Promise<UserTopSave[]> {
+    console.log(userId);
+    const clippedTopCollection = this.find({
+      where: { user: { id: userId } },
+      relations: ['top'],
+      withDeleted: true, //이미 삭제된 옷의 정보도 불러오기 위해.
+    });
+    return clippedTopCollection;
+  }
 }

@@ -34,4 +34,16 @@ export class UserAccessorySaveRepository extends Repository<UserAccessorySave> {
   async notClipAccessory(userAccessorySave: UserAccessorySave) {
     await this.remove(userAccessorySave);
   }
+
+  async getClippedAccessoryCollection(
+    userId: number,
+  ): Promise<UserAccessorySave[]> {
+    console.log(userId);
+    const clippedAccessoryCollection = this.find({
+      where: { user: { id: userId } },
+      relations: ['accessory'],
+      withDeleted: true,
+    });
+    return clippedAccessoryCollection;
+  }
 }

@@ -43,6 +43,18 @@ export class ShoeService {
     return urlShoeCollection;
   }
 
+  async getClippedShoeCollection(userId: number): Promise<Partial<Shoe>[]> {
+    const clippedShoeCollection =
+      await this.userShoeSaveRepository.getClippedShoeCollection(userId);
+    const urlClippedShoeCollection = clippedShoeCollection.map(
+      (userShoeSave) => ({
+        id: userShoeSave.shoe.id,
+        url: userShoeSave.shoe.url,
+      }),
+    );
+    return urlClippedShoeCollection;
+  }
+
   async getShoeDetail(clothId: number): Promise<Shoe> {
     const shoe = await this.shoeRepository.findShoeById(clothId);
 
