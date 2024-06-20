@@ -42,13 +42,13 @@ export class UserLookBookSaveRepository extends Repository<UserLookBookSave> {
       'userLookBookSave',
     )
       .leftJoinAndSelect('userLookBookSave.lookbook', 'lookbook')
+      .leftJoinAndSelect('userLookBookSave.user', 'user')
       .leftJoinAndSelect('lookbook.topLookBooks', 'topLookBook')
       .leftJoinAndSelect('topLookBook.top', 'top')
       .leftJoinAndSelect('lookbook.accessoryLookBooks', 'accessoryLookBook')
       .leftJoinAndSelect('accessoryLookBook.accessory', 'accessory')
       .leftJoinAndSelect('lookbook.pant', 'pant')
       .leftJoinAndSelect('lookbook.shoe', 'shoe')
-      .leftJoinAndSelect('lookbook.user', 'user')
       .select([
         'userLookBookSave.id',
         'lookbook.id',
